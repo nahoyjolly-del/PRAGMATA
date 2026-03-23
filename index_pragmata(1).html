@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOHAN JOLLY // BTS SIO SISR</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ══ VARIABLES ══ */
+:root {
+  --bg:     #0a0c0f;
+  --bg2:    #0e1015;
+  --panel:  #111418;
+  --border: #1e2228;
+  --border2:#252b34;
+  --cyan:   #00e5ff;
+  --cyan2:  #00b8cc;
+  --cyan3:  #007a8a;
+  --green:  #39ff88;
+  --green2: #20c960;
+  --amber:  #ffb347;
+  --red:    #ff4d6d;
+  --dim:    #3a4250;
+  --mid:    #6b7480;
+  --light:  #9ba8b5;
+  --text:   #d4dde8;
+  --white:  #eef2f7;
+  --fm: 'JetBrains Mono', monospace;
+  --fs: 'Space Mono', monospace;
+  --fd: 'Syne', sans-serif;
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+html { scroll-behavior:smooth }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fm);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ══ CURSOR ══ */
+#cur { position:fixed; pointer-events:none; z-index:99999; transform:translate(-50%,-50%); width:20px; height:20px }
+#cur::before { content:''; position:absolute; inset:0; border:1px solid var(--cyan); border-radius:2px; transition:all .15s; transform:rotate(45deg) }
+#cur::after { content:''; position:absolute; top:50%; left:50%; width:4px; height:4px; background:var(--cyan); transform:translate(-50%,-50%); border-radius:50% }
+#cur.hover::before { width:28px; height:28px; margin:-4px; border-color:var(--green); opacity:.6 }
+body * { cursor: none }
+
+/* ══ SCROLLBAR ══ */
+#sb { position:fixed; top:0; left:0; height:2px; background:var(--cyan); z-index:9999; width:0%; box-shadow:0 0 8px var(--cyan) }
+::-webkit-scrollbar { width:4px }
+::-webkit-scrollbar-track { background:#0a0c0f }
+::-webkit-scrollbar-thumb { background:var(--border2) }
+
+/* ══ LOADER ══ */
+#loader {
+  position:fixed; inset:0; z-index:99990; background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family: var(--fm);
+  transition: opacity .6s, visibility .6s;
+}
+#loader.out { opacity:0; visibility:hidden }
+.ld-logo { font-family:var(--fd); font-size:clamp(28px,5vw,52px); font-weight:800; letter-spacing:2px; color:var(--white); margin-bottom:8px }
+.ld-logo span { color:var(--cyan) }
+.ld-sub { font-size:9px; letter-spacing:5px; color:var(--dim); margin-bottom:48px; text-transform:uppercase }
+.ld-bar-wrap { width:260px; position:relative }
+.ld-bar-label { display:flex; justify-content:space-between; font-size:8px; letter-spacing:2px; color:var(--dim); margin-bottom:8px }
+.ld-bar-label span { color:var(--cyan) }
+.ld-bar-track { height:2px; background:var(--border2); overflow:hidden }
+.ld-bar-fill { height:100%; width:0%; background:var(--cyan); box-shadow:0 0 10px var(--cyan); transition: width .05s }
+.ld-steps { margin-top:16px; font-size:8px; color:var(--dim); letter-spacing:1px; min-height:16px; text-align:center }
+.ld-steps span { color:var(--green) }
+
+/* ══ SCANLINES OVERLAY ══ */
+#scan { position:fixed; inset:0; pointer-events:none; z-index:9000; background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px); opacity:.5 }
+
+/* ══ HEADER ══ */
+header {
+  position:fixed; top:0; left:0; right:0; z-index:500; height:48px;
+  background:rgba(10,12,15,.96); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; padding:0 32px;
+  backdrop-filter:blur(12px);
+}
+.hl { display:flex; align-items:center; gap:14px }
+.hname { font-family:var(--fd); font-size:14px; font-weight:700; letter-spacing:3px; color:var(--white) }
+.hname span { color:var(--cyan) }
+.htag { font-size:8px; letter-spacing:2px; color:var(--dim); border:1px solid var(--border2); padding:3px 7px }
+nav { display:flex; gap:2px }
+nav a {
+  font-family:var(--fm); font-size:8px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--mid); text-decoration:none; padding:6px 12px;
+  border:1px solid transparent; transition:all .15s; position:relative;
+}
+nav a::after { content:''; position:absolute; bottom:0; left:0; width:0; height:1px; background:var(--cyan); transition:width .2s }
+nav a:hover { color:var(--white); border-color:var(--border2) }
+nav a:hover::after { width:100% }
+.hstatus { display:flex; align-items:center; gap:6px; font-size:8px; letter-spacing:2px; color:var(--green) }
+.hdot { width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:pulse 2s ease infinite }
+@keyframes pulse { 50% { opacity:.3 } }
+
+/* ══ HUD CORNER ══ */
+#hud {
+  position:fixed; bottom:16px; right:16px; z-index:400;
+  font-size:7px; letter-spacing:1px; color:var(--dim); text-align:right;
+  line-height:2; font-family:var(--fm);
+}
+#hud .hv { color:var(--cyan3) }
+
+/* ══ TICKER ══ */
+#ticker {
+  position:fixed; bottom:0; left:0; right:0; z-index:400;
+  height:22px; background:rgba(0,229,255,.03); border-top:1px solid var(--border);
+  overflow:hidden; display:flex; align-items:center;
+}
+.tick-inner { display:flex; gap:0; white-space:nowrap; animation:tick 30s linear infinite }
+.tick-item { font-size:8px; letter-spacing:2px; color:var(--dim); padding:0 24px; border-right:1px solid var(--border) }
+.tick-item.hi { color:var(--cyan3) }
+@keyframes tick { from { transform:translateX(0) } to { transform:translateX(-50%) } }
+
+/* ══ HERO ══ */
+.hero {
+  min-height:100vh; padding:80px 60px 60px;
+  display:grid; grid-template-columns:1fr 320px; gap:60px; align-items:center;
+  position:relative; overflow:hidden;
+}
+/* grid pattern */
+.hero::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 80% at 0% 40%, black 20%, transparent 75%);
+  opacity: .5;
+}
+.hero-tag {
+  display:inline-flex; align-items:center; gap:8px; font-size:9px; letter-spacing:4px;
+  color:var(--cyan); text-transform:uppercase; margin-bottom:20px;
+  opacity:0; animation:fadeup .5s ease 10.4s forwards;
+}
+.hero-tag::before, .hero-tag::after { content:''; width:24px; height:1px; background:var(--cyan) }
+.hero-name {
+  font-family:var(--fd); font-size:clamp(48px,8vw,96px); font-weight:800;
+  line-height:.9; letter-spacing:1px; text-transform:uppercase;
+  color:var(--white); opacity:0; animation:fadeup .6s ease 10.6s forwards;
+}
+.hero-name em { color:var(--cyan); font-style:normal; display:block }
+.hero-role {
+  font-size:10px; letter-spacing:5px; color:var(--mid); margin-top:14px; text-transform:uppercase;
+  opacity:0; animation:fadeup .5s ease 10.8s forwards;
+}
+.hero-bio {
+  margin-top:20px; font-size:13px; font-family:var(--fm); font-weight:300;
+  color:var(--light); line-height:1.9; max-width:440px;
+  padding-left:16px; border-left:2px solid var(--cyan3);
+  opacity:0; animation:fadeup .5s ease 11s forwards;
+}
+
+/* STATUS BLOCK */
+.hero-status {
+  margin-top:24px; display:inline-block;
+  background:var(--panel); border:1px solid var(--border2);
+  opacity:0; animation:fadeup .5s ease 11.1s forwards;
+}
+.hs-row { display:flex; align-items:center; gap:12px; padding:10px 16px; border-bottom:1px solid var(--border) }
+.hs-row:last-child { border-bottom:none }
+.hs-label { font-size:7px; letter-spacing:3px; color:var(--dim); width:70px; flex-shrink:0 }
+.hs-val { font-size:9px; color:var(--text); letter-spacing:1px }
+.hs-val.ok { color:var(--green) }
+.hs-val.cyan { color:var(--cyan) }
+.hs-bar { flex:1; height:3px; background:var(--border); display:flex; gap:1px }
+.hs-seg { flex:1; background:var(--border2) }
+.hs-seg.on { background:var(--green); box-shadow:0 0 4px rgba(57,255,136,.4) }
+.hs-seg.on.mid { background:var(--amber) }
+
+/* CTA */
+.hero-cta { display:flex; gap:10px; margin-top:20px; opacity:0; animation:fadeup .5s ease 11.2s forwards }
+.btn {
+  font-family:var(--fm); font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  padding:11px 22px; text-decoration:none; transition:all .2s; position:relative;
+  overflow:hidden; display:inline-flex; align-items:center; gap:8px;
+}
+.btn-p { background:var(--cyan); color:var(--bg); border:1px solid var(--cyan) }
+.btn-p:hover { background:transparent; color:var(--cyan) }
+.btn-g { background:transparent; color:var(--mid); border:1px solid var(--border2) }
+.btn-g:hover { color:var(--text); border-color:var(--mid) }
+
+/* AGENT CARD */
+.agent-card {
+  background:var(--panel); border:1px solid var(--border2); position:relative;
+  opacity:0; animation:fadein .8s ease 11s forwards;
+}
+.agent-card::before, .agent-card::after {
+  content:''; position:absolute; width:12px; height:12px;
+  border-color:var(--cyan); border-style:solid;
+}
+.agent-card::before { top:0; left:0; border-width:1px 0 0 1px }
+.agent-card::after { bottom:0; right:0; border-width:0 1px 1px 0 }
+.ac-header { padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between }
+.ac-title { font-size:8px; letter-spacing:3px; color:var(--cyan) }
+.ac-badge { font-size:7px; letter-spacing:2px; color:var(--dim); padding:3px 8px; border:1px solid var(--border2) }
+.ac-body { padding:16px }
+.ac-avatar {
+  width:80px; height:80px; background:var(--bg2); border:1px solid var(--border2);
+  margin:0 auto 16px; display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+.ac-avatar::before { content:'PHOTO'; position:absolute; font-size:7px; letter-spacing:2px; color:var(--border2) }
+.ac-fields { display:grid; gap:8px }
+.acf { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border) }
+.acf:last-child { border-bottom:none }
+.acf-k { font-size:7px; letter-spacing:2px; color:var(--dim) }
+.acf-v { font-size:9px; color:var(--text) }
+.acf-v.ok { color:var(--green) }
+.acf-v.cy { color:var(--cyan) }
+/* inventory */
+.ac-inv { margin-top:16px; border-top:1px solid var(--border); padding-top:12px }
+.ac-inv-title { font-size:7px; letter-spacing:3px; color:var(--dim); margin-bottom:10px }
+.ac-inv-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px }
+.inv-item { border:1px solid var(--border) }
+.inv-item:hover { border-color:var(--border2) }
+.inv-name { font-size:6px; letter-spacing:1px; color:var(--dim); padding:4px 6px 2px; text-transform:uppercase }
+.inv-bar { display:flex; gap:1px; padding:0 6px 4px }
+.inv-seg { flex:1; height:4px; background:var(--border) }
+.inv-seg.on { background:var(--green) }
+.inv-seg.on.y { background:var(--amber) }
+.inv-pct { font-size:6px; color:var(--dim); text-align:right; padding:0 6px 4px }
+
+/* XP BAR */
+.ac-xp { margin-top:12px }
+.ac-xp-top { display:flex; justify-content:space-between; font-size:7px; letter-spacing:2px; color:var(--dim); margin-bottom:6px }
+.ac-xp-track { height:3px; background:var(--border); overflow:hidden }
+.ac-xp-fill { height:100%; width:73%; background:linear-gradient(90deg,var(--cyan3),var(--cyan)); box-shadow:0 0 8px rgba(0,229,255,.4); animation:xpgrow 1.5s ease 11.5s both }
+@keyframes xpgrow { from { width:0% } }
+
+/* ══ SECTION BASE ══ */
+.section { padding:90px 0 }
+.wrap { max-width:1080px; margin:0 auto; padding:0 60px }
+.sh { display:flex; align-items:center; gap:16px; margin-bottom:52px }
+.sn { font-size:9px; letter-spacing:3px; color:var(--cyan3) }
+.st { font-family:var(--fd); font-size:32px; font-weight:800; letter-spacing:4px; color:var(--white); text-transform:uppercase }
+.sr { flex:1; height:1px; background:linear-gradient(90deg,var(--border2),transparent) }
+
+/* ══ COMPETENCES ══ */
+.skills-layout { display:grid; grid-template-columns:200px 1fr; border:1px solid var(--border2); background:var(--bg2) }
+.char-panel { border-right:1px solid var(--border); padding:20px 16px; display:flex; flex-direction:column; align-items:center; background:var(--panel) }
+.char-figure { width:120px; height:154px; position:relative; margin-bottom:12px }
+.char-name { font-family:var(--fd); font-size:11px; font-weight:700; letter-spacing:3px; color:var(--white); margin-bottom:4px }
+.char-class { font-size:7px; letter-spacing:3px; color:var(--cyan); margin-bottom:12px }
+.char-lvl { display:flex; flex-direction:column; align-items:center; padding:8px; background:var(--bg2); border:1px solid var(--border); width:100%; margin-bottom:10px }
+.cl-l { font-size:7px; letter-spacing:3px; color:var(--dim) }
+.cl-v { font-family:var(--fd); font-size:24px; font-weight:800; color:var(--cyan); line-height:1 }
+.char-equip { width:100%; font-size:7px; line-height:2.2; color:var(--dim) }
+.char-equip span { color:var(--light) }
+
+/* Stats panel */
+.stats-panel { display:flex; flex-direction:column }
+.stat-tabs { display:flex; border-bottom:1px solid var(--border) }
+.sktab {
+  font-family:var(--fm); font-size:8px; letter-spacing:2px; color:var(--mid);
+  padding:12px 16px; border:none; background:transparent; text-transform:uppercase;
+  border-bottom:2px solid transparent; transition:all .15s; margin-bottom:-1px;
+}
+.sktab:hover { color:var(--text) }
+.sktab.active { color:var(--cyan); border-bottom-color:var(--cyan) }
+.skpanel { display:none; padding:24px }
+.skpanel.active { display:block }
+.rcat { font-size:8px; letter-spacing:4px; color:var(--dim); text-transform:uppercase; margin-bottom:20px }
+.rstat {
+  display:grid; grid-template-columns:180px 1fr 36px 32px;
+  align-items:center; gap:12px; margin-bottom:14px;
+}
+.rsn { font-size:11px; color:var(--light); display:flex; align-items:center; gap:8px }
+.rsn-ico { font-size:13px }
+.rsbar { position:relative; height:8px; background:var(--border) }
+.rsbar-fill { position:absolute; top:0; left:0; height:100%; width:0%; transition:width .9s cubic-bezier(.4,0,.2,1) }
+.rsbar-fill.col-ap { background:var(--cyan); box-shadow:0 0 8px rgba(0,229,255,.4) }
+.rsbar-fill.col-a { background:var(--green); box-shadow:0 0 8px rgba(57,255,136,.3) }
+.rsbar-segs { position:absolute; inset:0; display:flex }
+.rsbar-segs div { flex:1; border-right:2px solid var(--bg2) }
+.rsval { font-size:9px; color:var(--dim); text-align:right }
+.rrank { font-size:8px; font-weight:700; padding:2px 5px; text-align:center }
+.rrank.rap { color:var(--cyan); background:rgba(0,229,255,.08); border:1px solid rgba(0,229,255,.2) }
+.rrank.ra { color:var(--green); background:rgba(57,255,136,.06); border:1px solid rgba(57,255,136,.15) }
+.rpanel-footer { display:flex; align-items:center; gap:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border) }
+.rpf-label { font-size:8px; letter-spacing:3px; color:var(--dim) }
+.rpf-score { font-family:var(--fd); font-size:20px; font-weight:800; color:var(--cyan) }
+.rpf-stars { display:flex; gap:3px }
+.rpf-star { font-size:12px; color:var(--border2) }
+.rpf-star.on { color:var(--amber) }
+
+/* ══ MISSIONS ══ */
+.e5-label { font-size:8px; letter-spacing:4px; color:var(--cyan3); text-transform:uppercase; margin-bottom:32px; padding-bottom:12px; border-bottom:1px solid var(--border) }
+.pg { display:grid; gap:16px }
+.pf {
+  background:var(--panel); border:1px solid var(--border);
+  transition:border-color .2s;
+  opacity:0; transform:translateY(16px); transition:opacity .4s,transform .4s,border-color .2s;
+}
+.pf.in { opacity:1; transform:translateY(0) }
+.pf:hover { border-color:var(--border2) }
+.pfh { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--bg2); border-bottom:1px solid var(--border) }
+.pfc { font-size:8px; letter-spacing:3px; color:var(--cyan) }
+.pfs { font-size:7px; letter-spacing:2px; padding:3px 8px; border:1px solid }
+.pfs.a { color:var(--green); border-color:rgba(57,255,136,.3); background:rgba(57,255,136,.05) }
+.pfs.cl { color:var(--amber); border-color:rgba(255,179,71,.3); background:rgba(255,179,71,.05) }
+.pfb { padding:16px 20px 12px }
+.pfn { font-family:var(--fd); font-size:36px; font-weight:800; color:var(--border2); line-height:1; float:right; margin-top:-4px }
+.pftitle { font-family:var(--fd); font-size:16px; font-weight:700; color:var(--white); margin-bottom:6px }
+.pfdesc { font-size:11px; color:var(--mid); line-height:1.7; max-width:480px }
+.pftch { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px }
+.pftag { font-size:7px; letter-spacing:2px; color:var(--cyan3); padding:3px 8px; border:1px solid var(--border2); text-transform:uppercase }
+.pfdb {
+  width:100%; padding:10px 20px; background:var(--bg2); border:none; border-top:1px solid var(--border);
+  font-family:var(--fm); font-size:8px; letter-spacing:3px; color:var(--dim); text-transform:uppercase;
+  text-align:left; display:flex; justify-content:space-between; align-items:center; transition:all .15s;
+}
+.pfdb:hover { color:var(--text); background:var(--panel) }
+.pfdb.open .arr { transform:rotate(180deg) }
+.arr { display:inline-block; transition:transform .2s }
+.pfdw { height:0; overflow:hidden; transition:height .3s ease }
+.pfdw.open { height:auto }
+.pfdwi { padding:20px 20px 24px; border-top:1px solid var(--border) }
+.pdtit { font-size:8px; letter-spacing:3px; color:var(--cyan3); text-transform:uppercase; margin-bottom:12px }
+.e5-list { list-style:none; padding:0 }
+.e5-list li { font-size:11px; color:var(--mid); padding:5px 0 5px 16px; border-bottom:1px solid var(--border); position:relative; line-height:1.6 }
+.e5-list li::before { content:'›'; position:absolute; left:0; color:var(--cyan3) }
+.e5-list li:last-child { border-bottom:none }
+.e5-single-proof { margin-top:12px; display:grid; gap:10px }
+.e5-proof-text {
+  width:100%; min-height:80px; background:var(--bg); border:1px solid var(--border);
+  color:var(--light); font-family:var(--fm); font-size:11px; padding:12px; resize:vertical;
+  line-height:1.7;
+}
+.e5-proof-text:focus { outline:none; border-color:var(--cyan3) }
+.e5-proof-img-zone { border:1px dashed var(--border2); padding:20px; text-align:center }
+.e5-proof-img-placeholder { font-size:9px; letter-spacing:2px; color:var(--dim) }
+.e5-link-row { display:flex; align-items:center; gap:10px }
+.e5-link-lbl { font-size:8px; letter-spacing:2px; color:var(--cyan3) }
+.e5-link-input {
+  flex:1; background:var(--bg); border:1px solid var(--border); border-bottom:1px solid var(--border2);
+  color:var(--light); font-family:var(--fm); font-size:10px; padding:7px 10px;
+}
+.e5-link-input:focus { outline:none; border-color:var(--cyan3) }
+
+/* ══ TERRAIN / EXPÉRIENCE ══ */
+#experience { background:linear-gradient(180deg,transparent,rgba(0,229,255,.02),transparent) }
+.tl { display:grid; grid-template-columns:1fr 280px; gap:40px }
+.timeline { position:relative; padding-left:24px }
+.timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:var(--border2) }
+.tli { position:relative; margin-bottom:32px; opacity:0; transform:translateX(-16px); transition:opacity .4s, transform .4s }
+.tli.in { opacity:1; transform:translateX(0) }
+.tldot { position:absolute; left:-30px; top:4px; width:8px; height:8px; border:1px solid var(--cyan); background:var(--bg); transform:rotate(45deg) }
+.tldt { font-size:8px; letter-spacing:2px; color:var(--cyan3); margin-bottom:6px }
+.tltt { font-family:var(--fd); font-size:17px; font-weight:700; color:var(--white); margin-bottom:4px }
+.tlw { font-size:9px; letter-spacing:2px; color:var(--mid); margin-bottom:8px }
+.tlds { font-size:11px; color:var(--light); line-height:1.7 }
+.tlout { display:inline-block; margin-top:8px; font-size:7px; letter-spacing:2px; padding:3px 8px; border:1px solid }
+.tlout.o { color:var(--amber); border-color:rgba(255,179,71,.3) }
+.tlout.s { color:var(--green); border-color:rgba(57,255,136,.3) }
+
+/* DOSSIER CARD */
+.doss { background:var(--panel); border:1px solid var(--border2) }
+.doss-header { padding:12px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px }
+.doss-icon { opacity:.4 }
+.doss-title { font-size:8px; letter-spacing:3px; color:var(--cyan) }
+.doss-rows { padding:8px 0 }
+.dsr { display:flex; justify-content:space-between; align-items:center; padding:8px 16px; border-bottom:1px solid var(--border) }
+.dsr:last-child { border-bottom:none }
+.dsk { font-size:8px; letter-spacing:2px; color:var(--dim) }
+.dsv { font-size:11px; color:var(--text) }
+.dsv.g { color:var(--green) }
+.dsv.r { color:var(--amber) }
+.radar-block { padding:16px; border-top:1px solid var(--border) }
+.radar-title { font-size:7px; letter-spacing:3px; color:var(--dim); text-transform:uppercase; margin-bottom:10px }
+canvas#rc { display:block; margin:0 auto }
+.clearance-block { padding:12px 16px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between }
+.cl-key { font-size:7px; letter-spacing:3px; color:var(--dim) }
+.cl-val { font-family:var(--fd); font-size:16px; font-weight:800; color:var(--cyan) }
+.cl-status { font-size:7px; letter-spacing:2px; color:var(--green) }
+
+/* ══ CONTACT ══ */
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start }
+.contact-info { display:grid; gap:12px }
+.cor { display:flex; align-items:center; gap:14px; padding:14px; background:var(--panel); border:1px solid var(--border); transition:border-color .2s }
+.cor:hover { border-color:var(--border2) }
+.coi { font-size:20px; width:32px; text-align:center; flex-shrink:0 }
+.ck { font-size:7px; letter-spacing:3px; color:var(--dim); text-transform:uppercase; margin-bottom:4px }
+.cval { font-size:11px; color:var(--text) }
+.cval a { color:var(--cyan); text-decoration:none }
+.cval a:hover { text-decoration:underline }
+/* terminal */
+.term-screen { background:var(--bg); border:1px solid var(--border2); font-family:var(--fm) }
+.term-header { padding:8px 14px; background:var(--panel); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between }
+.term-title { font-size:8px; letter-spacing:2px; color:var(--dim) }
+.term-blink { color:var(--cyan); animation:tblink 1s step-end infinite }
+@keyframes tblink { 50% { opacity:0 } }
+.term-body { padding:14px; min-height:100px }
+.term-line { font-size:10px; margin-bottom:8px; opacity:0; animation:tdrop .3s ease forwards }
+@keyframes tdrop { from { opacity:0; transform:translateY(-4px) } to { opacity:1; transform:none } }
+.prompt { color:var(--cyan3) }
+.val { color:var(--light) }
+.btngm {
+  display:flex; align-items:center; gap:10px; margin-top:16px;
+  background:var(--cyan); color:var(--bg); text-decoration:none;
+  font-family:var(--fm); font-size:9px; letter-spacing:3px; padding:12px 20px;
+  text-transform:uppercase; transition:all .2s;
+}
+.btngm:hover { background:transparent; color:var(--cyan); border:1px solid var(--cyan) }
+.tx-note { font-size:8px; letter-spacing:2px; color:var(--dim); margin-top:8px }
+.tx-note a { color:var(--cyan3) }
+
+/* ══ FOOTER ══ */
+footer { padding:28px 60px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center }
+.ft { font-size:8px; letter-spacing:2px; color:var(--dim) }
+.ft em { color:var(--cyan3); font-style:normal }
+
+/* ══ ALERT BANNER ══ */
+#alert-banner {
+  position:fixed; top:48px; left:0; right:0; z-index:490;
+  background:rgba(255,77,109,.08); border-bottom:1px solid rgba(255,77,109,.2);
+  padding:8px 32px; display:flex; align-items:center; gap:16px;
+  font-size:8px; letter-spacing:2px; color:rgba(255,77,109,.8);
+  transform:translateY(-100%); transition:transform .3s;
+}
+#alert-banner.show { transform:translateY(0) }
+.ab-icon { color:var(--red) }
+.ab-txt { flex:1 }
+.ab-close { color:var(--dim); padding:4px 8px; border:1px solid var(--border); cursor:pointer }
+.ab-close:hover { color:var(--text); border-color:var(--border2) }
+
+/* ══ ANIMATIONS ══ */
+@keyframes fadeup { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:none } }
+@keyframes fadein { from { opacity:0 } to { opacity:1 } }
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:880px) {
+  .hero { grid-template-columns:1fr; padding:80px 24px 40px }
+  .agent-card { display:none }
+  .skills-layout { grid-template-columns:1fr }
+  .char-panel { display:none }
+  .tl { grid-template-columns:1fr }
+  .contact-grid { grid-template-columns:1fr }
+  .wrap { padding:0 24px }
+  nav a { padding:4px 8px }
+}
+</style>
+</head>
+<body>
+
+<!-- OVERLAYS -->
+<div id="scan"></div>
+<div id="cur"></div>
+<div id="sb"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-logo">YOHAN <span>JOLLY</span></div>
+  <div class="ld-sub">BTS SIO // SISR // Portfolio</div>
+  <div class="ld-bar-wrap">
+    <div class="ld-bar-label"><span>INIT</span><span id="ldPct">0%</span></div>
+    <div class="ld-bar-track"><div class="ld-bar-fill" id="ldFill"></div></div>
+    <div class="ld-steps" id="ldStep">Chargement du système...</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="hl">
+    <div class="hname">YOHAN <span>JOLLY</span></div>
+    <div class="htag">BTS SIO · SISR</div>
+  </div>
+  <nav>
+    <a href="#competences" class="ss" data-t="competences">Compétences</a>
+    <a href="#projets" class="ss" data-t="projets">Missions</a>
+    <a href="#experience" class="ss" data-t="experience">Terrain</a>
+    <a href="#contact" class="ss" data-t="contact">Contact</a>
+  </nav>
+  <div class="hstatus"><div class="hdot"></div>OPÉRATIONNEL</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hleft">
+    <div class="hero-tag">DOSSIER CLASSIFIÉ — #UCF-7743</div>
+    <h1 class="hero-name">YOHAN<em>JOLLY</em></h1>
+    <div class="hero-role">// Étudiant BTS SIO · option SISR</div>
+    <p class="hero-bio">2ème année option Solutions d'Infrastructure, Systèmes et Réseaux (SISR)</p>
+
+    <div class="hero-status">
+      <div class="hs-row">
+        <div class="hs-label">VITALITÉ</div>
+        <div class="hs-bar">
+          <div class="hs-seg on"></div><div class="hs-seg on"></div><div class="hs-seg on"></div>
+          <div class="hs-seg on"></div><div class="hs-seg on"></div><div class="hs-seg on"></div>
+          <div class="hs-seg on"></div><div class="hs-seg on"></div><div class="hs-seg on"></div><div class="hs-seg on"></div>
+        </div>
+        <div class="hs-val ok">FINE</div>
+      </div>
+      <div class="hs-row">
+        <div class="hs-label">STATUT</div>
+        <div class="hs-val cyan">■ EN FORMATION</div>
+      </div>
+      <div class="hs-row">
+        <div class="hs-label">CLEARANCE</div>
+        <div class="hs-val cyan">LEVEL-2</div>
+      </div>
+    </div>
+
+    <div class="hero-cta">
+      <a class="btn btn-p ss" data-t="projets">▶ VOIR LES MISSIONS</a>
+      <a class="btn btn-g ss" data-t="contact">TRANSMETTRE</a>
+    </div>
+  </div>
+
+  <!-- AGENT CARD -->
+  <div class="agent-card">
+    <div class="ac-header">
+      <div class="ac-title">AGENT // PROFIL</div>
+      <div class="ac-badge">BTS SIO · SISR</div>
+    </div>
+    <div class="ac-body">
+      <div class="ac-avatar"></div>
+      <div class="ac-fields">
+        <div class="acf"><span class="acf-k">NOM DE CODE</span><span class="acf-v">YOHAN JOLLY</span></div>
+        <div class="acf"><span class="acf-k">SPÉCIALITÉ</span><span class="acf-v cy">Cybersécurité</span></div>
+        <div class="acf"><span class="acf-k">STATUT</span><span class="acf-v ok">■ OPÉRATIONNEL</span></div>
+        <div class="acf"><span class="acf-k">CLEARANCE</span><span class="acf-v cy">LEVEL-2</span></div>
+      </div>
+
+      <div class="ac-xp">
+        <div class="ac-xp-top"><span>XP</span><span>73%</span></div>
+        <div class="ac-xp-track"><div class="ac-xp-fill"></div></div>
+      </div>
+
+      <div class="ac-inv">
+        <div class="ac-inv-title">INVENTAIRE</div>
+        <div class="ac-inv-grid">
+          <div class="inv-item">
+            <div class="inv-name">Assiduité</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div></div>
+            <div class="inv-pct">92%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Autonomie</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on y"></div></div>
+            <div class="inv-pct">85%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Communic.</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div></div>
+            <div class="inv-pct">95%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Équipe</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div></div>
+            <div class="inv-pct">95%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Polyval.</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on y"></div></div>
+            <div class="inv-pct">85%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Efficacité</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on y"></div></div>
+            <div class="inv-pct">85%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="char-equip" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:7px;line-height:2.2">
+        <div style="color:var(--dim)">ARME <span>Kit d'analyse réseau</span></div>
+        <div style="color:var(--dim)">ARMURE <span>Défense système</span></div>
+        <div style="color:var(--dim)">SPÉCIAL <span>Instinct analytique</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMPÉTENCES ══ -->
+<div id="competences" class="section">
+<div class="wrap">
+  <div class="sh"><span class="sn">01 //</span><h2 class="st">Compétences</h2><div class="sr"></div></div>
+  <div class="skills-layout">
+    <!-- Personnage -->
+    <div class="char-panel">
+      <div class="char-figure">
+        <svg viewBox="0 0 120 154" fill="none" width="120" height="154">
+          <rect x="44" y="114" width="12" height="33" rx="2" fill="#0e1015" stroke="#1e2228" stroke-width=".8"/>
+          <rect x="64" y="114" width="12" height="33" rx="2" fill="#0e1015" stroke="#1e2228" stroke-width=".8"/>
+          <rect x="44" y="124" width="12" height="6" rx="1" fill="#111418" stroke="#1e2228"/>
+          <rect x="64" y="124" width="12" height="6" rx="1" fill="#111418" stroke="#1e2228"/>
+          <rect x="42" y="144" width="16" height="4" rx="1" fill="#0a0c0f" stroke="#1e2228"/>
+          <rect x="62" y="144" width="16" height="4" rx="1" fill="#0a0c0f" stroke="#1e2228"/>
+          <rect x="37" y="74" width="46" height="42" rx="3" fill="#0e1015" stroke="#1e2228"/>
+          <line x1="60" y1="74" x2="60" y2="116" stroke="#1e2228" stroke-width=".8"/>
+          <rect x="40" y="79" width="16" height="10" rx="1" fill="#111418" stroke="#1e2228" stroke-width=".6"/>
+          <rect x="64" y="79" width="16" height="10" rx="1" fill="#111418" stroke="#1e2228" stroke-width=".6"/>
+          <rect x="38" y="75" width="8" height="5" rx="1" fill="#0a0c0f" stroke="#00e5ff" stroke-width=".5"/>
+          <rect x="37" y="110" width="46" height="5" rx="1" fill="#111418" stroke="#1e2228"/>
+          <rect x="20" y="76" width="16" height="35" rx="3" fill="#0e1015" stroke="#1e2228"/>
+          <ellipse cx="28" cy="114" rx="7" ry="5" fill="#0a0c0f" stroke="#1e2228"/>
+          <rect x="84" y="76" width="16" height="35" rx="3" fill="#0e1015" stroke="#1e2228"/>
+          <ellipse cx="92" cy="114" rx="7" ry="5" fill="#0a0c0f" stroke="#1e2228"/>
+          <rect x="24" y="72" width="14" height="7" rx="1" fill="#111418" stroke="#1e2228"/>
+          <rect x="82" y="72" width="14" height="7" rx="1" fill="#111418" stroke="#1e2228"/>
+          <rect x="54" y="63" width="12" height="12" rx="2" fill="#0e1015" stroke="#1e2228"/>
+          <rect x="42" y="30" width="36" height="32" rx="7" fill="#0e1015" stroke="#1e2228"/>
+          <ellipse cx="60" cy="31" rx="17" ry="7" fill="#111418" stroke="#1e2228"/>
+          <rect x="42" y="30" width="36" height="9" rx="4" fill="#0a0c0f" stroke="#1e2228"/>
+          <ellipse cx="42" cy="45" rx="3" ry="4" fill="#0e1015" stroke="#1e2228"/>
+          <ellipse cx="78" cy="45" rx="3" ry="4" fill="#0e1015" stroke="#1e2228"/>
+          <ellipse cx="53" cy="44" rx="4.5" ry="3.5" fill="#0a0c0f" stroke="#00e5ff" stroke-width=".7"/>
+          <ellipse cx="67" cy="44" rx="4.5" ry="3.5" fill="#0a0c0f" stroke="#00e5ff" stroke-width=".7"/>
+          <circle cx="53" cy="44" r="2" fill="#00b8cc" opacity=".8"/>
+          <circle cx="67" cy="44" r="2" fill="#00b8cc" opacity=".8"/>
+          <path d="M55 52 L54 58 L60 59 L66 58 L65 52" stroke="#1e2228" stroke-width=".7" fill="none"/>
+          <path d="M52 62 Q60 64 68 62" stroke="#252b34" stroke-width="1" fill="none" stroke-linecap="round"/>
+          <!-- ligne cyan glow yeux -->
+          <circle cx="53" cy="44" r="2" fill="#00e5ff" opacity=".08"/>
+          <circle cx="67" cy="44" r="2" fill="#00e5ff" opacity=".08"/>
+          <!-- badge épaule -->
+          <rect x="37" y="75" width="8" height="5" rx="1" fill="none" stroke="#00e5ff" stroke-width=".4" opacity=".6"/>
+        </svg>
+      </div>
+      <div class="char-name">YOHAN JOLLY</div>
+      <div class="char-class">// CYBERSECURITY TRAINEE</div>
+      <div class="char-lvl"><div class="cl-l">NIVEAU</div><div class="cl-v">02</div></div>
+      <div class="char-equip">
+        <div>ARME <span>Kit d'analyse réseau</span></div>
+        <div>ARMURE <span>Défense système</span></div>
+        <div>SPÉCIAL <span>Instinct analytique</span></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-panel">
+      <div class="stat-tabs">
+        <button class="sktab active" data-tab="front">⚔ ANALYSE</button>
+        <button class="sktab" data-tab="back">🛡 SÉCURITÉ</button>
+        <button class="sktab" data-tab="tools">🔧 OUTILS</button>
+        <button class="sktab" data-tab="soft">★ ENVIRONNEMENT</button>
+      </div>
+
+      <div class="skpanel active" id="tab-front">
+        <div class="rcat">CAPACITÉS OFFENSIVES</div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">⚛</span>Analyse réseau</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="75"><div class="rsn"><span class="rsn-ico">🔍</span>Détection d'anomalies</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">75</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🖥</span>Diagnostic système</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">🔧</span>Résolution d'incidents</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rpanel-footer"><span class="rpf-label">SCORE ANALYSE</span><span class="rpf-score">71/100</span><div class="rpf-stars"><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star">★</span><span class="rpf-star">★</span></div></div>
+      </div>
+
+      <div class="skpanel" id="tab-back">
+        <div class="rcat">CAPACITÉS SÉCURITÉ</div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🔥</span>Firewall (pfSense)</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="70"><div class="rsn"><span class="rsn-ico">👤</span>Active Directory</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">70</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">🔒</span>Sécurisation réseau</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🛡</span>Bonnes pratiques cyber</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rpanel-footer"><span class="rpf-label">SCORE SÉCURITÉ</span><span class="rpf-score">70/100</span><div class="rpf-stars"><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star">★</span><span class="rpf-star">★</span></div></div>
+      </div>
+
+      <div class="skpanel" id="tab-tools">
+        <div class="rcat">ÉQUIPEMENT SPÉCIAL // OUTILS</div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🦈</span>Wireshark</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="70"><div class="rsn"><span class="rsn-ico">📡</span>Nmap</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">70</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="75"><div class="rsn"><span class="rsn-ico">🐧</span>Linux</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">75</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">💻</span>Virtualisation</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rpanel-footer"><span class="rpf-label">SCORE OUTILS</span><span class="rpf-score">67/100</span><div class="rpf-stars"><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star">★</span><span class="rpf-star">★</span></div></div>
+      </div>
+
+      <div class="skpanel" id="tab-soft">
+        <div class="rcat">STATISTIQUES // ENVIRONNEMENT</div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">🌐</span>Réseaux (TCP/IP)</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🖥</span>Systèmes Windows</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="75"><div class="rsn"><span class="rsn-ico">🏗</span>Architecture réseau</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">75</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="70"><div class="rsn"><span class="rsn-ico">🚀</span>Déploiement services</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">70</div><div class="rrank ra">A</div></div>
+        <div class="rpanel-footer"><span class="rpf-label">SCORE ENVIRONNEMENT</span><span class="rpf-score">67/100</span><div class="rpf-stars"><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star">★</span><span class="rpf-star">★</span></div></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ══ MISSIONS ══ -->
+<div id="projets" class="section" style="background:var(--bg2)">
+<div class="wrap">
+  <div class="sh"><span class="sn">02 //</span><h2 class="st">Missions</h2><div class="sr"></div></div>
+  <div class="e5-label">// ÉPREUVE E5 — BTS SIO — COMPÉTENCES DOCUMENTÉES</div>
+  <div class="pg">
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C1 // PATRIMOINE</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">01</div>
+        <div class="pftitle">Gérer le patrimoine informatique</div>
+        <p class="pfdesc">Recensement des ressources, habilitations, continuité de service, sauvegardes et respect des règles d'utilisation.</p>
+        <div class="pftch">
+          <span class="pftag">Inventaire</span><span class="pftag">Habilitations</span><span class="pftag">Sauvegardes</span><span class="pftag">Normes</span>
+        </div>
+      </div>
+      <button class="pfdb" data-d="d1">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d1">
+        <div class="pfdwi">
+          <div class="pdtit">// SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Recenser et identifier les ressources numériques</li>
+            <li>Exploiter des référentiels, normes et standards adoptés par le prestataire</li>
+            <li>Mettre en place et vérifier les niveaux d'habilitation associés à un service</li>
+            <li>Vérifier les conditions de la continuité d'un service informatique</li>
+            <li>Gérer des sauvegardes</li>
+            <li>Vérifier le respect des règles d'utilisation des ressources numériques</li>
+          </ul>
+          <div class="pdtit" style="margin-top:16px">// PREUVE &amp; RÉALISATION</div>
+          <div class="e5-single-proof">
+            <textarea class="e5-proof-text" placeholder="Décrivez ici votre réalisation, le contexte, les outils utilisés et les résultats obtenus..."></textarea>
+            <div class="e5-proof-img-zone"><div class="e5-proof-img-placeholder">⊕ IMAGE / CAPTURE D'ÉCRAN</div></div>
+            <div class="e5-link-row">
+              <span class="e5-link-lbl">🔗 LIEN</span>
+              <input class="e5-link-input" type="text" placeholder="https://...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C2 // INCIDENTS</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">02</div>
+        <div class="pftitle">Répondre aux incidents et demandes</div>
+        <p class="pfdesc">Collecte, suivi et traitement des demandes d'assistance concernant les services réseau, système et applicatifs.</p>
+        <div class="pftch">
+          <span class="pftag">Helpdesk</span><span class="pftag">ITIL</span><span class="pftag">Tickets</span><span class="pftag">Résolution</span>
+        </div>
+      </div>
+      <button class="pfdb" data-d="d2">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d2">
+        <div class="pfdwi">
+          <div class="pdtit">// SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Collecter, suivre et orienter des demandes</li>
+            <li>Traiter des demandes concernant les services réseau et système</li>
+            <li>Traiter des demandes concernant les applications</li>
+          </ul>
+          <div class="pdtit" style="margin-top:16px">// PREUVE &amp; RÉALISATION</div>
+          <div class="e5-single-proof">
+            <textarea class="e5-proof-text" placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-proof-img-zone"><div class="e5-proof-img-placeholder">⊕ IMAGE / CAPTURE D'ÉCRAN</div></div>
+            <div class="e5-link-row">
+              <span class="e5-link-lbl">🔗 LIEN</span>
+              <input class="e5-link-input" type="text" placeholder="https://...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C3 // WEB</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">03</div>
+        <div class="pftitle">Développer la présence en ligne</div>
+        <p class="pfdesc">Valorisation de l'image sur les médias numériques, référencement, visibilité et évolution du site Web de l'organisation.</p>
+        <div class="pftch">
+          <span class="pftag">SEO</span><span class="pftag">Web</span><span class="pftag">Juridique</span><span class="pftag">Médias</span>
+        </div>
+      </div>
+      <button class="pfdb" data-d="d3">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d3">
+        <div class="pfdwi">
+          <div class="pdtit">// SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Participer à la valorisation de l'image de l'organisation sur les médias numériques en tenant compte du cadre juridique et des enjeux économiques</li>
+            <li>Référencer les services en ligne de l'organisation et mesurer leur visibilité</li>
+            <li>Participer à l'évolution d'un site Web exploitant les données de l'organisation</li>
+          </ul>
+          <div class="pdtit" style="margin-top:16px">// PREUVE &amp; RÉALISATION</div>
+          <div class="e5-single-proof">
+            <textarea class="e5-proof-text" placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-proof-img-zone"><div class="e5-proof-img-placeholder">⊕ IMAGE / CAPTURE D'ÉCRAN</div></div>
+            <div class="e5-link-row">
+              <span class="e5-link-lbl">🔗 LIEN</span>
+              <input class="e5-link-input" type="text" placeholder="https://...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C4 // PROJET</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">04</div>
+        <div class="pftitle">Travailler en mode projet</div>
+        <p class="pfdesc">Analyse des objectifs, planification des activités, suivi des indicateurs et gestion des écarts en environnement projet.</p>
+        <div class="pftch">
+          <span class="pftag">Planification</span><span class="pftag">Indicateurs</span><span class="pftag">Méthode</span><span class="pftag">Analyse</span>
+        </div>
+      </div>
+      <button class="pfdb" data-d="d4">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d4">
+        <div class="pfdwi">
+          <div class="pdtit">// SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Analyser les objectifs et les modalités d'organisation d'un projet</li>
+            <li>Planifier les activités</li>
+            <li>Évaluer les indicateurs de suivi d'un projet et analyser les écarts</li>
+          </ul>
+          <div class="pdtit" style="margin-top:16px">// PREUVE &amp; RÉALISATION</div>
+          <div class="e5-single-proof">
+            <textarea class="e5-proof-text" placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-proof-img-zone"><div class="e5-proof-img-placeholder">⊕ IMAGE / CAPTURE D'ÉCRAN</div></div>
+            <div class="e5-link-row">
+              <span class="e5-link-lbl">🔗 LIEN</span>
+              <input class="e5-link-input" type="text" placeholder="https://...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C5 // SERVICE</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">05</div>
+        <div class="pftitle">Mettre à disposition un service informatique</div>
+        <p class="pfdesc">Tests d'intégration et d'acceptation, déploiement et accompagnement des utilisateurs lors de la mise en place d'un service.</p>
+        <div class="pftch">
+          <span class="pftag">Tests</span><span class="pftag">Déploiement</span><span class="pftag">Formation</span><span class="pftag">Intégration</span>
+        </div>
+      </div>
+      <button class="pfdb" data-d="d5">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d5">
+        <div class="pfdwi">
+          <div class="pdtit">// SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Réaliser les tests d'intégration et d'acceptation d'un service</li>
+            <li>Déployer un service</li>
+            <li>Accompagner les utilisateurs dans la mise en place d'un service</li>
+          </ul>
+          <div class="pdtit" style="margin-top:16px">// PREUVE &amp; RÉALISATION</div>
+          <div class="e5-single-proof">
+            <textarea class="e5-proof-text" placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-proof-img-zone"><div class="e5-proof-img-placeholder">⊕ IMAGE / CAPTURE D'ÉCRAN</div></div>
+            <div class="e5-link-row">
+              <span class="e5-link-lbl">🔗 LIEN</span>
+              <input class="e5-link-input" type="text" placeholder="https://...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C6 // PROFESSIONNEL</span><span class="pfs cl">EN COURS</span></div>
+      <div class="pfb">
+        <div class="pfn">06</div>
+        <div class="pftitle">Organiser son développement professionnel</div>
+        <p class="pfdesc">Environnement d'apprentissage personnel, veille informationnelle, gestion de l'identité et du projet professionnel.</p>
+        <div class="pftch">
+          <span class="pftag">Veille</span><span class="pftag">Identité</span><span class="pftag">Apprentissage</span><span class="pftag">Projet</span>
+        </div>
+      </div>
+      <button class="pfdb" data-d="d6">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d6">
+        <div class="pfdwi">
+          <div class="pdtit">// SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Mettre en place son environnement d'apprentissage personnel</li>
+            <li>Mettre en œuvre des outils et stratégies de veille informationnelle</li>
+            <li>Gérer son identité professionnelle</li>
+            <li>Développer son projet professionnel</li>
+          </ul>
+          <div class="pdtit" style="margin-top:16px">// PREUVE &amp; RÉALISATION</div>
+          <div class="e5-single-proof">
+            <textarea class="e5-proof-text" placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-proof-img-zone"><div class="e5-proof-img-placeholder">⊕ IMAGE / CAPTURE D'ÉCRAN</div></div>
+            <div class="e5-link-row">
+              <span class="e5-link-lbl">🔗 LIEN</span>
+              <input class="e5-link-input" type="text" placeholder="https://...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div></div>
+
+<!-- ══ TERRAIN ══ -->
+<div id="experience" class="section">
+<div class="wrap">
+  <div class="sh"><span class="sn">03 //</span><h2 class="st">Rapport de Terrain</h2><div class="sr"></div></div>
+  <div class="tl">
+    <div class="timeline">
+      <div class="tli">
+        <div class="tldot"></div>
+        <div class="tldt">■ 2024 — PRÉSENT // EN COURS</div>
+        <div class="tltt">BTS SIO</div>
+        <div class="tlw">// Lycée Saint Rémi — ROUBAIX, FRANCE</div>
+        <p class="tlds">BTS SIO spécialité Solutions d'Infrastructure, Systèmes et Réseaux. Option Mathématiques approfondies.</p>
+        <span class="tlout o">MISSION EN COURS</span>
+      </div>
+      <div class="tli">
+        <div class="tldot"></div>
+        <div class="tldt">■ Janvier 2026 — Février 2026 // TERMINÉE</div>
+        <div class="tltt">Stage en milieu professionnel</div>
+        <div class="tlw">// Service Zonal d'Appui Numérique — LILLE, FRANCE</div>
+        <p class="tlds">Stage en milieu professionnel de deuxième année au sein du Service Zonal d'Appui Numérique du Département Zonal de la Police Nationale du Nord pendant 7 semaines.</p>
+        <span class="tlout s">MISSION ACCOMPLIE</span>
+      </div>
+      <div class="tli">
+        <div class="tldot"></div>
+        <div class="tldt">■ 2021 — 2024 // TERMINÉE</div>
+        <div class="tltt">Baccalauréat général</div>
+        <div class="tlw">// Lycée Saint Rémi — ROUBAIX, FRANCE</div>
+        <p class="tlds">Baccalauréat Général Spécialité Mathématique - Science de la vie et de la Terre. Mention Assez bien.</p>
+        <span class="tlout s">MISSION ACCOMPLIE</span>
+      </div>
+    </div>
+
+    <div class="doss">
+      <div class="doss-header">
+        <div class="doss-icon">
+          <svg viewBox="0 0 32 32" width="28" height="28"><circle cx="16" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 12A8 8 0 0 1 23.9 17" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M23.9 17A8 8 0 0 1 8.1 17" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M8.1 17A8 8 0 0 1 16 12" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="16" cy="16" r="2" fill="currentColor"/></svg>
+        </div>
+        <div class="doss-title">PROFIL OPÉRATIONNEL</div>
+      </div>
+      <div class="doss-rows">
+        <div class="dsr"><span class="dsk">Missions totales</span><span class="dsv">6</span></div>
+        <div class="dsr"><span class="dsk">Taux de succès</span><span class="dsv g">97.4%</span></div>
+        <div class="dsr"><span class="dsk">Années terrain</span><span class="dsv">2+</span></div>
+        <div class="dsr"><span class="dsk">Opérations validées</span><span class="dsv">4</span></div>
+        <div class="dsr"><span class="dsk">Statut</span><span class="dsv r">En cours de formation</span></div>
+      </div>
+      <div class="radar-block">
+        <div class="radar-title">RADAR DE COMPÉTENCES</div>
+        <canvas id="rc" width="200" height="200"></canvas>
+      </div>
+      <div class="clearance-block">
+        <div>
+          <div class="cl-key">Niveau de clearance</div>
+          <div class="cl-val">LEVEL-2/3</div>
+        </div>
+        <div class="cl-status">● ACTIVE</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ══ CONTACT ══ -->
+<div id="contact" class="section" style="background:var(--bg2);padding-bottom:80px">
+<div class="wrap">
+  <div class="sh"><span class="sn">04 //</span><h2 class="st">Transmission</h2><div class="sr"></div></div>
+  <div class="contact-grid">
+    <div class="contact-info">
+      <div class="cor">
+        <div class="coi">✉</div>
+        <div>
+          <div class="ck">Fréquence principale</div>
+          <div class="cval"><a href="mailto:nahoyjolly@gmail.com">nahoyjolly@gmail.com</a></div>
+        </div>
+      </div>
+      <div class="cor">
+        <div class="coi">📍</div>
+        <div>
+          <div class="ck">Coordonnées GPS</div>
+          <div class="cval">LILLE, FRANCE</div>
+        </div>
+      </div>
+      <div class="cor">
+        <div class="coi">🔗</div>
+        <div>
+          <div class="ck">Réseau sécurisé</div>
+          <div class="cval"><a href="https://www.linkedin.com/in/yohan-jolly-37410b359/" target="_blank">linkedin.com/in/yohan-jolly</a></div>
+        </div>
+      </div>
+      <div class="cor">
+        <div class="coi">🐙</div>
+        <div>
+          <div class="ck">Archives</div>
+          <div class="cval">nahoyjolly-del</div>
+        </div>
+      </div>
+      <div class="cor">
+        <div class="coi">📄</div>
+        <div>
+          <div class="ck">CV</div>
+          <div class="cval"><a href="#" style="color:var(--cyan)">⬇ Télécharger le CV (PDF)</a></div>
+        </div>
+      </div>
+      <div class="cor">
+        <div class="coi">📊</div>
+        <div>
+          <div class="ck">Tableau de compétences</div>
+          <div class="cval"><a href="#" style="color:var(--cyan)">⬇ Télécharger le tableau (Excel)</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="term-screen">
+        <div class="term-header">
+          <span class="term-title">TERMINAL // TRANSMISSION SÉCURISÉE</span>
+          <span class="term-blink">█</span>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+      <a class="btngm" href="https://mail.google.com/mail/?view=cm&to=nahoyjolly@gmail.com&su=Contact%20Portfolio" target="_blank" rel="noopener noreferrer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="currentColor"/></svg>
+        <span>ENVOYER LE SIGNAL</span>
+      </a>
+      <div class="tx-note">// Ouvre Gmail avec nahoyjolly@gmail.com comme destinataire</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ALERT BANNER -->
+<div id="alert-banner">
+  <span class="ab-icon">⚠</span>
+  <span class="ab-txt" id="ab-txt">ACCÈS DOSSIER CLASSIFIÉ DÉTECTÉ — SURVEILLANCE ACTIVÉE</span>
+  <span class="ab-close" id="ab-close">[ FERMER ]</span>
+</div>
+
+<!-- HUD CORNER -->
+<div id="hud">
+  <div>SYS <span class="hv" id="chCpu">CPU: 12%</span></div>
+  <div>MEM <span class="hv" id="chMem">MEM: 4.2GB</span></div>
+  <div>NET <span class="hv" id="chNet">NET: ↑ 0b/s</span></div>
+  <div id="chTime" style="color:var(--cyan3)">--:--:--</div>
+</div>
+
+<!-- TICKER -->
+<div id="ticker">
+  <div class="tick-inner" id="tickerInner"></div>
+</div>
+
+<footer>
+  <div class="ft">© 2025 <em>YOHAN JOLLY</em> // BTS SIO — SYSTÈMES OPÉRATIONNELS</div>
+  <div class="ft">BTS SIO 2025 // <em>SISR · CLEARANCE ACTIVE</em></div>
+</footer>
+
+<script>
+'use strict';
+
+/* ══ LOADER ══ */
+(function(){
+  const fill=document.getElementById('ldFill');
+  const pct=document.getElementById('ldPct');
+  const step=document.getElementById('ldStep');
+  const steps=[
+    [10,'Initialisation du noyau...'],
+    [25,'Chargement des modules de sécurité...'],
+    [42,'Vérification de l\'intégrité des données...'],
+    [58,'Connexion au serveur de clearance...'],
+    [72,'Déchiffrement du dossier classifié...'],
+    [88,'Validation LEVEL-2 confirmée...'],
+    [100,'Accès autorisé — Bienvenue, Agent.']
+  ];
+  let i=0;
+  function next(){
+    if(i>=steps.length){ setTimeout(()=>{ document.getElementById('loader').classList.add('out'); },400); return; }
+    const [p,t]=steps[i++];
+    fill.style.width=p+'%';
+    pct.textContent=p+'%';
+    step.innerHTML='<span>▶</span> '+t;
+    setTimeout(next, i===steps.length ? 700 : 350+Math.random()*200);
+  }
+  setTimeout(next, 300);
+})();
+
+/* ══ CURSOR ══ */
+const cur=document.getElementById('cur');
+let cx=0,cy=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY});
+(function animate(){
+  cx+=(tx-cx)*.2; cy+=(ty-cy)*.2;
+  cur.style.left=cx+'px'; cur.style.top=cy+'px';
+  requestAnimationFrame(animate);
+})();
+document.querySelectorAll('a,button,.pftag,.cor,.sktab').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('hover'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('hover'));
+});
+
+/* ══ SCROLLBAR ══ */
+window.addEventListener('scroll',()=>{
+  const p=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;
+  document.getElementById('sb').style.width=p+'%';
+});
+
+/* ══ SMOOTH SCROLL ══ */
+document.querySelectorAll('.ss').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=a.dataset.t;
+    const el=document.getElementById(t);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+document.querySelectorAll('nav a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const href=a.getAttribute('href').replace('#','');
+    const el=document.getElementById(href);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+
+/* ══ SKILL TABS ══ */
+function animBars(panel,delay){
+  panel.querySelectorAll('.rstat').forEach((s,i)=>{
+    const pct=parseInt(s.dataset.pct)||0;
+    const fill=s.querySelector('.rsbar-fill');
+    if(!fill) return;
+    fill.style.width='0%';
+    setTimeout(()=>{
+      fill.style.transition='width .9s cubic-bezier(.4,0,.2,1)';
+      fill.style.width=pct+'%';
+    }, delay+i*80);
+  });
+}
+document.querySelectorAll('.sktab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.sktab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.skpanel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    const panel=document.getElementById('tab-'+tab.dataset.tab);
+    if(panel){ panel.classList.add('active'); animBars(panel,60); }
+  });
+});
+
+/* ══ DRAWERS ══ */
+document.querySelectorAll('.pfdb').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const dw=document.getElementById(btn.dataset.d);
+    if(!dw) return;
+    const isOpen=dw.classList.contains('open');
+    document.querySelectorAll('.pfdw').forEach(d=>{ d.classList.remove('open'); d.style.height='0'; });
+    document.querySelectorAll('.pfdb').forEach(b=>b.classList.remove('open'));
+    if(!isOpen){
+      dw.classList.add('open');
+      dw.style.height=dw.scrollHeight+'px';
+      btn.classList.add('open');
+    }
+  });
+});
+
+/* ══ INTERSECTION OBSERVER ══ */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting) return;
+    const el=entry.target;
+    if(el.classList.contains('pf')) el.classList.add('in');
+    if(el.classList.contains('tli')) el.classList.add('in');
+    if(el.classList.contains('skpanel')&&el.classList.contains('active')){
+      animBars(el,100); io.unobserve(el);
+    }
+  });
+},{threshold:.08});
+document.querySelectorAll('.pf,.tli,.skpanel').forEach(el=>io.observe(el));
+
+/* ══ RADAR ══ */
+(function(){
+  const cv=document.getElementById('rc');
+  if(!cv) return;
+  const ctx=cv.getContext('2d'),cx=100,cy=100,r=72;
+  const labs=['Analyse','Sécurité','Outils','Env.','Incidents','AD'];
+  const vals=[.75,.70,.68,.67,.75,.75];
+  const N=6;
+  let prog=0,running=false;
+  function draw(){
+    ctx.clearRect(0,0,200,200);
+    for(let l=1;l<=4;l++){
+      ctx.beginPath();
+      for(let i=0;i<N;i++){
+        const a=Math.PI*2/N*i-Math.PI/2;
+        const x=cx+r*(l/4)*Math.cos(a),y=cy+r*(l/4)*Math.sin(a);
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.closePath(); ctx.strokeStyle=`rgba(0,229,255,${.06+l*.04})`; ctx.lineWidth=.5; ctx.stroke();
+    }
+    for(let i=0;i<N;i++){
+      const a=Math.PI*2/N*i-Math.PI/2;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+      ctx.strokeStyle='rgba(0,229,255,.12)'; ctx.lineWidth=.5; ctx.stroke();
+    }
+    const p=Math.min(prog,1);
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const a=Math.PI*2/N*i-Math.PI/2;
+      const rv=r*vals[i]*p;
+      i===0?ctx.moveTo(cx+rv*Math.cos(a),cy+rv*Math.sin(a)):ctx.lineTo(cx+rv*Math.cos(a),cy+rv*Math.sin(a));
+    }
+    ctx.closePath(); ctx.fillStyle='rgba(0,229,255,.12)'; ctx.fill();
+    ctx.strokeStyle='rgba(0,229,255,.8)'; ctx.lineWidth=1.5; ctx.shadowColor='rgba(0,229,255,.4)'; ctx.shadowBlur=6; ctx.stroke(); ctx.shadowBlur=0;
+    for(let i=0;i<N;i++){
+      const a=Math.PI*2/N*i-Math.PI/2;
+      const rv=r*vals[i]*p;
+      if(rv>0){
+        ctx.beginPath(); ctx.arc(cx+rv*Math.cos(a),cy+rv*Math.sin(a),2.5,0,Math.PI*2);
+        ctx.fillStyle='#00e5ff'; ctx.shadowColor='rgba(0,229,255,.5)'; ctx.shadowBlur=4; ctx.fill(); ctx.shadowBlur=0;
+      }
+      ctx.fillStyle='#3a4250'; ctx.font='7px JetBrains Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(labs[i],cx+(r+14)*Math.cos(a),cy+(r+14)*Math.sin(a));
+    }
+    if(prog<1){ prog+=.025; requestAnimationFrame(draw); }
+  }
+  new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting&&!running){ running=true; draw(); }
+  },{threshold:.3}).observe(cv);
+})();
+
+/* ══ TERMINAL ══ */
+function buildTerminal(){
+  const tb=document.getElementById('termBody');
+  if(!tb) return;
+  const lines=[
+    ['INIT','CANAL SÉCURISÉ... OK'],
+    ['DEST','nahoyjolly@gmail.com'],
+    ['PROT','CHIFFREMENT AES-256'],
+    ['STAT','EN ATTENTE DE SIGNAL']
+  ];
+  tb.innerHTML='';
+  lines.forEach((l,i)=>{
+    const div=document.createElement('div');
+    div.className='term-line';
+    div.style.animationDelay=(i*.2)+'s';
+    div.innerHTML=`<span class="prompt">[${l[0]}]</span><span class="val"> ${l[1]}</span>`;
+    tb.appendChild(div);
+  });
+}
+new IntersectionObserver(entries=>{
+  if(entries[0].isIntersecting) buildTerminal();
+},{threshold:.3}).observe(document.getElementById('contact'));
+
+/* ══ HUD ══ */
+function updateHUD(){
+  const now=new Date();
+  const el=document.getElementById('chTime');
+  if(el) el.textContent=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  const cpu=document.getElementById('chCpu');
+  const mem=document.getElementById('chMem');
+  const net=document.getElementById('chNet');
+  if(cpu) cpu.textContent='CPU: '+(8+Math.floor(Math.random()*18))+'%';
+  if(mem) mem.textContent='MEM: '+(3.8+Math.random()*.8).toFixed(1)+'GB';
+  if(net) net.textContent='NET: ↑ '+Math.floor(Math.random()*420)+'b/s';
+}
+setInterval(updateHUD,1200); updateHUD();
+
+/* ══ TICKER ══ */
+(function(){
+  const track=document.getElementById('tickerInner');
+  if(!track) return;
+  const items=[
+    {t:'UCF-7743 // DOSSIER ACTIF',hi:true},{t:'SYSTÈME SÉCURISÉ v3.1'},
+    {t:'RÉSEAU OPÉRATIONNEL',hi:true},{t:'PROTOCOLE CONTAINMENT OK'},
+    {t:'AGENTS CONNECTÉS: 1',hi:true},{t:'CLEARANCE LEVEL-2 CONFIRMÉ',hi:true},
+    {t:'CHIFFREMENT AES-256 ACTIF'},{t:'SURVEILLANCE PASSIVE // STANDBY'},
+    {t:'UCF-7743 // DOSSIER ACTIF',hi:true},{t:'SYSTÈME SÉCURISÉ v3.1'},
+    {t:'RÉSEAU OPÉRATIONNEL',hi:true},{t:'PROTOCOLE CONTAINMENT OK'},
+    {t:'AGENTS CONNECTÉS: 1',hi:true},{t:'CLEARANCE LEVEL-2 CONFIRMÉ',hi:true},
+    {t:'CHIFFREMENT AES-256 ACTIF'},{t:'SURVEILLANCE PASSIVE // STANDBY'},
+  ];
+  track.innerHTML=items.map(it=>`<span class="tick-item${it.hi?' hi':''}">${it.t}</span>`).join('');
+})();
+
+/* ══ ALERT BANNER ══ */
+document.getElementById('ab-close').addEventListener('click',()=>{
+  document.getElementById('alert-banner').classList.remove('show');
+});
+const alertMsgs=['ACCÈS DOSSIER CLASSIFIÉ DÉTECTÉ — SURVEILLANCE ACTIVÉE','AVERTISSEMENT : ZONE SÉCURISÉE ACTIVE','TRAÇAGE IP EN COURS... IDENTITÉ ENREGISTRÉE','PROTOCOLE DE SÉCURITÉ NIVEAU 3 ACTIF'];
+let lastAlertScroll=0,alertIdx=0;
+window.addEventListener('scroll',()=>{
+  if(window.scrollY-lastAlertScroll>800){
+    lastAlertScroll=window.scrollY;
+    alertIdx=(alertIdx+1)%alertMsgs.length;
+    const ab=document.getElementById('alert-banner');
+    const abt=document.getElementById('ab-txt');
+    if(ab&&abt){ abt.textContent=alertMsgs[alertIdx]; ab.classList.add('show'); setTimeout(()=>ab.classList.remove('show'),4000); }
+  }
+});
+
+/* ══ INIT SKILL BARS ══ */
+const activePanel=document.querySelector('.skpanel.active');
+if(activePanel) setTimeout(()=>animBars(activePanel,500),11500);
+</script>
+</body>
+</html>
