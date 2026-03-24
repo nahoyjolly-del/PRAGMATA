@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOHAN JOLLY // BTS SIO SISR</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* === FOND GRIS ARDOISE CLAIR === */
+  --bg:      #2c3240;
+  --bg2:     #333a4a;
+  --bg3:     #3a4255;
+  --panel:   #404860;
+  --panel2:  #4a5270;
+
+  /* === BORDURES VISIBLES === */
+  --b1:      #505878;
+  --b2:      #6070a0;
+  --b3:      #7888bb;
+
+  /* === ACCENTS PRAGMATA === */
+  --cyan:    #00f5ff;
+  --cyan2:   #40d8e8;
+  --cyan3:   #80c0d0;
+  --green:   #60ffa0;
+  --green2:  #40d878;
+  --amber:   #ffc060;
+  --orange:  #ff8840;
+  --red:     #ff5070;
+  --purple:  #a080ff;
+
+  /* === TEXTE HIÉRARCHISÉ === */
+  --tx-h:    #f0f4ff;   /* titres */
+  --tx:      #c8d4e8;   /* corps */
+  --tx-mid:  #90a0c0;   /* secondaire */
+  --tx-dim:  #607090;   /* tertiaire */
+  --tx-mute: #48586a;   /* décoratif */
+
+  --fm: 'JetBrains Mono', monospace;
+  --fd: 'Syne', sans-serif;
+
+  /* === TOKENS PRAGMATA === */
+  --tok-kw:   #a080ff;
+  --tok-str:  #60ffa0;
+  --tok-num:  #ffc060;
+  --tok-op:   #00f5ff;
+  --tok-cmt:  #607090;
+}
+
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+html { scroll-behavior:smooth }
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: var(--fm);
+  overflow-x: hidden;
+  cursor: none;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ══ CURSOR PRAGMATA ══ */
+#cur {
+  position:fixed; pointer-events:none; z-index:99999;
+  transform:translate(-50%,-50%);
+  width:24px; height:24px;
+}
+#cur::before {
+  content:''; position:absolute; inset:0;
+  border:2px solid var(--cyan); transform:rotate(45deg);
+  transition:all .12s;
+}
+#cur::after {
+  content:''; position:absolute; top:50%; left:50%;
+  width:5px; height:5px;
+  background:var(--cyan);
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+#cur.hover::before { width:32px; height:32px; margin:-4px; border-color:var(--amber); }
+body * { cursor:none }
+
+/* ══ SCROLL BAR ══ */
+#sb { position:fixed; top:0; left:0; height:3px; background:var(--cyan); z-index:9999; width:0%; box-shadow:0 0 10px var(--cyan) }
+::-webkit-scrollbar { width:5px }
+::-webkit-scrollbar-track { background:var(--bg) }
+::-webkit-scrollbar-thumb { background:var(--b2) }
+
+/* ══ SCANLINES — subtiles sur fond gris ══ */
+#scan {
+  position:fixed; inset:0; pointer-events:none; z-index:9000;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent 0, transparent 5px,
+    rgba(0,0,0,.03) 5px, rgba(0,0,0,.03) 6px
+  );
+}
+
+/* ════════════════════════════════════
+   LOADER PRAGMATA
+════════════════════════════════════ */
+#loader {
+  position:fixed; inset:0; z-index:99990;
+  background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:opacity .6s, visibility .6s;
+}
+#loader.out { opacity:0; visibility:hidden }
+
+/* grille de fond loader */
+#loader::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(var(--b1) 1px, transparent 1px),
+    linear-gradient(90deg, var(--b1) 1px, transparent 1px);
+  background-size:40px 40px;
+  opacity:.3;
+}
+
+.ld-frame {
+  position:relative; z-index:1;
+  background:var(--bg2); border:1px solid var(--b2);
+  padding:40px 48px; min-width:360px;
+  text-align:center;
+}
+/* coins angulaires Pragmata */
+.ld-frame::before, .ld-frame::after {
+  content:''; position:absolute;
+  width:20px; height:20px;
+  border-color:var(--cyan); border-style:solid;
+}
+.ld-frame::before { top:0; left:0; border-width:2px 0 0 2px }
+.ld-frame::after  { bottom:0; right:0; border-width:0 2px 2px 0 }
+
+.ld-logo {
+  font-family:var(--fd); font-size:clamp(32px,5vw,54px);
+  font-weight:800; letter-spacing:3px; color:var(--tx-h);
+  margin-bottom:6px;
+}
+.ld-logo em { color:var(--cyan); font-style:normal }
+.ld-sub {
+  font-size:11px; letter-spacing:5px; color:var(--tx-dim);
+  text-transform:uppercase; margin-bottom:40px;
+}
+.ld-sub em { color:var(--tok-kw) }
+.ld-label {
+  display:flex; justify-content:space-between;
+  font-size:11px; letter-spacing:2px; color:var(--tx-dim);
+  margin-bottom:8px;
+}
+.ld-label span { color:var(--cyan) }
+.ld-track { height:4px; background:var(--b1); overflow:hidden; position:relative }
+.ld-fill { height:100%; width:0%; background:var(--cyan); box-shadow:0 0 12px var(--cyan); transition:width .05s }
+.ld-step {
+  margin-top:16px; font-size:11px; color:var(--tx-mid);
+  letter-spacing:1px; min-height:20px; text-align:left;
+}
+.ld-step .kw { color:var(--tok-kw) }
+.ld-step .ok { color:var(--green) }
+
+/* tokens code en bas du loader */
+.ld-tokens {
+  margin-top:28px; text-align:left;
+  font-size:11px; color:var(--tx-mute); line-height:2;
+}
+.tk  { color:var(--tok-kw) }
+.ts  { color:var(--tok-str) }
+.tn  { color:var(--tok-num) }
+.to  { color:var(--tok-op) }
+.tc  { color:var(--tok-cmt) }
+
+/* ════════════════════════════════════
+   HEADER
+════════════════════════════════════ */
+header {
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  height:54px;
+  background:rgba(44,50,64,.97);
+  border-bottom:2px solid var(--b1);
+  display:flex; align-items:stretch; justify-content:space-between;
+  backdrop-filter:blur(12px);
+}
+/* segment gauche */
+.h-left {
+  display:flex; align-items:center; gap:0;
+  border-right:1px solid var(--b1);
+}
+/* bloc logo */
+.h-logo {
+  display:flex; align-items:center; gap:12px;
+  padding:0 24px;
+  border-right:1px solid var(--b1);
+}
+.h-logo-mark {
+  width:28px; height:28px; border:2px solid var(--cyan);
+  transform:rotate(45deg); display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.h-logo-mark-inner {
+  width:10px; height:10px; background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan);
+}
+.h-name {
+  font-family:var(--fd); font-size:15px; font-weight:800;
+  letter-spacing:3px; color:var(--tx-h);
+}
+.h-name em { color:var(--cyan); font-style:normal }
+.h-tag {
+  font-size:10px; letter-spacing:2px; color:var(--tx-dim);
+  padding:0 18px;
+  display:flex; align-items:center;
+}
+/* nav */
+nav { display:flex; align-items:stretch }
+nav a {
+  font-size:11px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--tx-mid); text-decoration:none;
+  display:flex; align-items:center; padding:0 18px;
+  border-right:1px solid var(--b1);
+  position:relative; transition:all .15s;
+}
+nav a::before { content:'//'; color:var(--b2); margin-right:6px; font-size:11px }
+nav a::after {
+  content:''; position:absolute; bottom:0; left:0; right:0;
+  height:2px; background:var(--cyan);
+  transform:scaleX(0); transition:transform .2s;
+}
+nav a:hover { color:var(--tx-h); background:rgba(0,245,255,.05) }
+nav a:hover::after { transform:scaleX(1) }
+
+.h-status {
+  display:flex; align-items:center; gap:8px;
+  padding:0 20px;
+  font-size:11px; letter-spacing:2px; color:var(--green);
+  border-left:1px solid var(--b1);
+}
+.h-dot {
+  width:7px; height:7px; background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:pulse 2s ease infinite;
+}
+@keyframes pulse { 50% { opacity:.3; box-shadow:none } }
+
+/* ════════════════════════════════════
+   HUD + TICKER
+════════════════════════════════════ */
+#hud {
+  position:fixed; bottom:30px; right:18px; z-index:400;
+  font-size:10px; letter-spacing:1px; color:var(--tx-mute);
+  text-align:right; line-height:2.2;
+}
+#hud .hv { color:var(--cyan3) }
+
+#ticker {
+  position:fixed; bottom:0; left:0; right:0; z-index:400;
+  height:26px; background:rgba(0,245,255,.03);
+  border-top:1px solid var(--b1);
+  overflow:hidden; display:flex; align-items:center;
+}
+.tick-inner { display:flex; white-space:nowrap; animation:tick 35s linear infinite }
+.tick-item { font-size:10px; letter-spacing:2px; color:var(--tx-mute); padding:0 28px; border-right:1px solid var(--b1) }
+.tick-item.hi { color:var(--cyan3) }
+@keyframes tick { from { transform:translateX(0) } to { transform:translateX(-50%) } }
+
+/* ════════════════════════════════════
+   HERO
+════════════════════════════════════ */
+.hero {
+  min-height:100vh; padding:72px 60px 60px;
+  display:grid; grid-template-columns:1fr 360px; gap:60px;
+  align-items:center; position:relative; overflow:hidden;
+}
+
+/* Grille Pragmata dense */
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(80,88,120,.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80,88,120,.35) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse 75% 85% at 0% 45%, black 10%, transparent 68%);
+}
+/* Ligne accent verticale gauche */
+.hero-vline {
+  position:absolute; left:0; top:12%; bottom:12%;
+  width:3px;
+  background:linear-gradient(180deg, transparent, var(--cyan), transparent);
+  opacity:.5;
+}
+/* Numéros de ligne style éditeur */
+.hero-linenos {
+  position:absolute; left:8px; top:80px; bottom:60px;
+  display:flex; flex-direction:column; gap:0;
+  font-size:10px; color:var(--tx-mute); line-height:2.2;
+  pointer-events:none; user-select:none;
+}
+
+.hleft { position:relative; z-index:2 }
+
+.hero-tag {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:12px; letter-spacing:4px; color:var(--cyan);
+  text-transform:uppercase; margin-bottom:24px;
+  opacity:0; animation:fadeup .5s ease 10.4s forwards;
+}
+.hero-tag .tc { color:var(--tok-cmt); font-size:13px }
+.hero-tag .ts { color:var(--tok-str) }
+
+.hero-name {
+  font-family:var(--fd);
+  font-size:clamp(54px,9vw,110px); font-weight:800;
+  line-height:.88; letter-spacing:1px; text-transform:uppercase;
+  color:var(--tx-h);
+  opacity:0; animation:fadeup .6s ease 10.6s forwards;
+}
+.hero-name em {
+  color:var(--cyan); font-style:normal; display:block;
+  text-shadow:0 0 50px rgba(0,245,255,.2);
+}
+.hero-role {
+  font-size:13px; letter-spacing:5px; color:var(--tx-mid);
+  margin-top:18px; text-transform:uppercase;
+  opacity:0; animation:fadeup .5s ease 10.8s forwards;
+}
+/* petite "ligne de code" sous le rôle */
+.hero-codeline {
+  margin-top:10px; font-size:12px; color:var(--tx-mute);
+  opacity:0; animation:fadeup .5s ease 10.9s forwards;
+}
+.hero-codeline .tk  { color:var(--tok-kw) }
+.hero-codeline .ts  { color:var(--tok-str) }
+.hero-codeline .tn  { color:var(--tok-num) }
+.hero-codeline .to  { color:var(--tok-op); margin:0 2px }
+
+.hero-bio {
+  margin-top:22px; font-size:14px; font-weight:300;
+  color:var(--tx); line-height:1.9; max-width:480px;
+  padding-left:18px; border-left:3px solid var(--cyan2);
+  opacity:0; animation:fadeup .5s ease 11s forwards;
+}
+
+/* Bloc status */
+.hero-status {
+  margin-top:28px; display:inline-block;
+  background:var(--bg2); border:1px solid var(--b2);
+  position:relative;
+  opacity:0; animation:fadeup .5s ease 11.1s forwards;
+}
+.hero-status::before, .hero-status::after {
+  content:''; position:absolute;
+  width:16px; height:16px; border-color:var(--cyan); border-style:solid;
+}
+.hero-status::before { top:0; left:0; border-width:2px 0 0 2px }
+.hero-status::after  { bottom:0; right:0; border-width:0 2px 2px 0 }
+.hs-row {
+  display:flex; align-items:center; gap:16px;
+  padding:12px 20px; border-bottom:1px solid var(--b1);
+}
+.hs-row:last-child { border-bottom:none }
+.hs-key {
+  font-size:11px; letter-spacing:3px; color:var(--tx-dim);
+  width:90px; flex-shrink:0; text-transform:uppercase;
+}
+.hs-val { font-size:13px; color:var(--tx); letter-spacing:1px }
+.hs-val.ok   { color:var(--green) }
+.hs-val.cyan { color:var(--cyan) }
+.hs-bar { flex:1; height:5px; background:var(--b1); display:flex; gap:2px }
+.hs-seg { flex:1; background:var(--b1) }
+.hs-seg.on { background:var(--green); box-shadow:0 0 5px rgba(96,255,160,.5) }
+
+/* CTA */
+.hero-cta {
+  display:flex; gap:12px; margin-top:28px;
+  opacity:0; animation:fadeup .5s ease 11.2s forwards;
+}
+.btn {
+  font-size:12px; letter-spacing:3px; text-transform:uppercase;
+  padding:13px 26px; text-decoration:none; transition:all .2s;
+  display:inline-flex; align-items:center; gap:8px; font-weight:600;
+}
+.btn-p {
+  background:var(--cyan); color:var(--bg); border:2px solid var(--cyan);
+}
+.btn-p:hover { background:transparent; color:var(--cyan) }
+.btn-g {
+  background:transparent; color:var(--tx-mid); border:2px solid var(--b2);
+}
+.btn-g:hover { color:var(--tx-h); border-color:var(--b3) }
+
+/* ════════════════════════════════════
+   AGENT CARD (droite du hero)
+════════════════════════════════════ */
+.agent-card {
+  background:var(--bg2); border:1px solid var(--b2); position:relative;
+  opacity:0; animation:fadein .8s ease 11s forwards;
+}
+.agent-card::before, .agent-card::after {
+  content:''; position:absolute; width:16px; height:16px;
+  border-color:var(--cyan); border-style:solid;
+}
+.agent-card::before { top:0; left:0; border-width:2px 0 0 2px }
+.agent-card::after  { bottom:0; right:0; border-width:0 2px 2px 0 }
+
+.ac-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 18px; background:var(--bg3);
+  border-bottom:1px solid var(--b1);
+}
+.ac-bar-title { font-size:11px; letter-spacing:3px; color:var(--cyan) }
+.ac-bar-title em { color:var(--tok-kw); font-style:normal }
+.ac-bar-badge {
+  font-size:10px; letter-spacing:2px; color:var(--tx-dim);
+  padding:3px 10px; border:1px solid var(--b1);
+}
+
+.ac-body { padding:20px }
+.ac-avatar {
+  width:90px; height:90px; background:var(--bg3);
+  border:1px solid var(--b2);
+  margin:0 auto 18px;
+  display:flex; align-items:center; justify-content:center;
+  position:relative; font-size:11px; letter-spacing:2px; color:var(--b2);
+}
+.ac-fields { display:grid; gap:0 }
+.acf {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:8px 0; border-bottom:1px solid var(--b1);
+}
+.acf:last-child { border-bottom:none }
+.acf-k { font-size:10px; letter-spacing:2px; color:var(--tx-dim) }
+.acf-v { font-size:12px; color:var(--tx) }
+.acf-v.ok   { color:var(--green) }
+.acf-v.cyan { color:var(--cyan) }
+
+/* XP */
+.ac-xp { margin-top:16px }
+.ac-xp-top {
+  display:flex; justify-content:space-between;
+  font-size:11px; letter-spacing:2px; color:var(--tx-dim); margin-bottom:7px;
+}
+.ac-xp-top span:last-child { color:var(--tok-num) }
+.ac-xp-track { height:5px; background:var(--b1); overflow:hidden }
+.ac-xp-fill {
+  height:100%; width:73%;
+  background:linear-gradient(90deg,var(--cyan3),var(--cyan));
+  box-shadow:0 0 10px rgba(0,245,255,.4);
+  animation:xpgrow 1.5s ease 11.5s both;
+}
+@keyframes xpgrow { from { width:0% } }
+
+/* INVENTAIRE */
+.ac-inv { margin-top:16px; border-top:1px solid var(--b1); padding-top:14px }
+.ac-inv-title {
+  font-size:10px; letter-spacing:3px; color:var(--tx-dim);
+  margin-bottom:10px; text-transform:uppercase;
+}
+.ac-inv-title em { color:var(--tok-cmt); font-style:normal }
+.ac-inv-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px }
+.inv-item { border:1px solid var(--b1); background:var(--bg3) }
+.inv-name { font-size:9px; letter-spacing:1px; color:var(--tx-dim); padding:5px 7px 2px; text-transform:uppercase }
+.inv-bar  { display:flex; gap:1px; padding:0 7px 3px }
+.inv-seg  { flex:1; height:4px; background:var(--b1) }
+.inv-seg.on   { background:var(--green) }
+.inv-seg.on.y { background:var(--amber) }
+.inv-pct { font-size:9px; color:var(--tok-num); text-align:right; padding:0 7px 5px }
+
+/* EQUIP */
+.ac-equip {
+  margin-top:14px; padding-top:12px; border-top:1px solid var(--b1);
+  font-size:11px; color:var(--tx-dim); line-height:2.2;
+}
+.ac-equip .ek { color:var(--tok-kw) }
+.ac-equip .ev { color:var(--tx-mid) }
+
+/* ════════════════════════════════════
+   SECTIONS
+════════════════════════════════════ */
+.section { padding:90px 0 }
+.wrap { max-width:1100px; margin:0 auto; padding:0 60px }
+.sh {
+  display:flex; align-items:center; gap:18px; margin-bottom:52px;
+  position:relative;
+}
+/* décoration Pragmata avant le numéro */
+.sn {
+  font-size:12px; letter-spacing:2px; color:var(--tok-cmt);
+  display:flex; align-items:center; gap:6px;
+}
+.sn::before { content:''; width:24px; height:1px; background:var(--b2) }
+.st {
+  font-family:var(--fd); font-size:34px; font-weight:800;
+  letter-spacing:4px; color:var(--tx-h); text-transform:uppercase;
+}
+.sr { flex:1; height:1px; background:linear-gradient(90deg,var(--b2),transparent) }
+
+/* ════════════════════════════════════
+   COMPÉTENCES
+════════════════════════════════════ */
+.skills-layout {
+  display:grid; grid-template-columns:220px 1fr;
+  border:1px solid var(--b2); background:var(--bg2);
+  position:relative;
+}
+/* coins ornement */
+.skills-layout::before, .skills-layout::after {
+  content:''; position:absolute;
+  width:18px; height:18px; border-color:var(--cyan); border-style:solid;
+}
+.skills-layout::before { top:0; right:0; border-width:2px 2px 0 0 }
+.skills-layout::after  { bottom:0; left:0; border-width:0 0 2px 2px }
+
+.char-panel {
+  border-right:1px solid var(--b1); padding:24px 16px;
+  display:flex; flex-direction:column; align-items:center;
+  background:var(--bg3);
+}
+.char-figure { width:120px; height:154px; margin-bottom:16px }
+.char-name {
+  font-family:var(--fd); font-size:13px; font-weight:700;
+  letter-spacing:3px; color:var(--tx-h); margin-bottom:4px;
+}
+.char-class { font-size:10px; letter-spacing:3px; color:var(--cyan); margin-bottom:14px }
+.char-lvl {
+  display:flex; flex-direction:column; align-items:center;
+  padding:10px; background:var(--bg2); border:1px solid var(--b1);
+  width:100%; margin-bottom:14px;
+}
+.cl-lbl { font-size:10px; letter-spacing:3px; color:var(--tx-dim) }
+.cl-num { font-family:var(--fd); font-size:30px; font-weight:800; color:var(--cyan); line-height:1 }
+.char-equip { width:100%; font-size:10px; line-height:2.4; color:var(--tx-dim) }
+.char-equip .ek { color:var(--tok-kw) }
+.char-equip .ev { color:var(--tx-mid) }
+
+/* Stats */
+.stats-panel { display:flex; flex-direction:column }
+.stat-tabs { display:flex; border-bottom:1px solid var(--b1) }
+.sktab {
+  font-size:11px; letter-spacing:2px; color:var(--tx-mid);
+  padding:14px 20px; border:none; background:transparent;
+  text-transform:uppercase; border-bottom:3px solid transparent;
+  transition:all .15s; margin-bottom:-1px;
+}
+.sktab:hover { color:var(--tx-h) }
+.sktab.active { color:var(--cyan); border-bottom-color:var(--cyan); background:rgba(0,245,255,.05) }
+.skpanel { display:none; padding:30px }
+.skpanel.active { display:block }
+.rcat {
+  font-size:11px; letter-spacing:4px; color:var(--tx-dim);
+  text-transform:uppercase; margin-bottom:24px;
+  display:flex; align-items:center; gap:10px;
+}
+.rcat::before { content:'//'; color:var(--tok-cmt) }
+.rcat::after  { content:''; flex:1; height:1px; background:var(--b1) }
+
+.rstat {
+  display:grid; grid-template-columns:200px 1fr 44px 40px;
+  align-items:center; gap:14px; margin-bottom:17px;
+}
+.rsn { font-size:13px; color:var(--tx); display:flex; align-items:center; gap:10px }
+.rsn-ico { font-size:16px }
+.rsbar { position:relative; height:11px; background:var(--b1); overflow:hidden }
+.rsbar-fill {
+  position:absolute; top:0; left:0; height:100%; width:0%;
+  transition:width .9s cubic-bezier(.4,0,.2,1);
+}
+.rsbar-fill.col-ap {
+  background:linear-gradient(90deg, var(--cyan3), var(--cyan));
+  box-shadow:0 0 12px rgba(0,245,255,.5);
+}
+.rsbar-fill.col-a {
+  background:linear-gradient(90deg, var(--green2), var(--green));
+  box-shadow:0 0 10px rgba(96,255,160,.4);
+}
+.rsbar-segs { position:absolute; inset:0; display:flex }
+.rsbar-segs div { flex:1; border-right:2px solid var(--bg2) }
+.rsval { font-size:12px; color:var(--tok-num); text-align:right; font-weight:600 }
+.rrank { font-size:11px; font-weight:700; padding:3px 7px; text-align:center }
+.rrank.rap {
+  color:var(--cyan);
+  background:rgba(0,245,255,.14); border:1px solid rgba(0,245,255,.35);
+}
+.rrank.ra  {
+  color:var(--green);
+  background:rgba(96,255,160,.1); border:1px solid rgba(96,255,160,.3);
+}
+.rpf {
+  display:flex; align-items:center; gap:16px;
+  margin-top:24px; padding-top:18px; border-top:1px solid var(--b1);
+}
+.rpf-lbl { font-size:11px; letter-spacing:3px; color:var(--tx-dim) }
+.rpf-score { font-family:var(--fd); font-size:28px; font-weight:800; color:var(--cyan) }
+.rpf-stars { display:flex; gap:4px }
+.rpf-star { font-size:16px; color:var(--b2) }
+.rpf-star.on { color:var(--amber); text-shadow:0 0 8px rgba(255,192,96,.6) }
+
+/* ════════════════════════════════════
+   MISSIONS
+════════════════════════════════════ */
+.e5-head {
+  font-size:12px; letter-spacing:4px; color:var(--tok-cmt);
+  text-transform:uppercase; margin-bottom:32px;
+  padding-bottom:14px; border-bottom:1px solid var(--b1);
+  display:flex; align-items:center; gap:10px;
+}
+.e5-head em { color:var(--tok-str) }
+
+.pg { display:grid; gap:16px }
+.pf {
+  background:var(--bg2); border:1px solid var(--b1);
+  position:relative;
+  opacity:0; transform:translateY(16px);
+  transition:opacity .4s, transform .4s, border-color .2s;
+}
+.pf.in { opacity:1; transform:translateY(0) }
+.pf:hover { border-color:var(--b2) }
+/* ornement coin Pragmata hover */
+.pf::before, .pf::after {
+  content:''; position:absolute;
+  width:14px; height:14px; border-color:var(--cyan3); border-style:solid;
+  opacity:0; transition:opacity .3s;
+}
+.pf::before { top:0; left:0; border-width:2px 0 0 2px }
+.pf::after  { bottom:0; right:0; border-width:0 2px 2px 0 }
+.pf:hover::before, .pf:hover::after { opacity:.7 }
+
+.pfh {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 20px; background:var(--bg3); border-bottom:1px solid var(--b1);
+}
+.pfc {
+  font-size:11px; letter-spacing:3px; color:var(--cyan);
+  display:flex; align-items:center; gap:8px;
+}
+.pfc::before { content:'//'; color:var(--tok-cmt) }
+.pfs { font-size:10px; letter-spacing:2px; padding:4px 11px; border:1px solid }
+.pfs.a  { color:var(--green);  border-color:rgba(96,255,160,.4);  background:rgba(96,255,160,.08) }
+.pfs.cl { color:var(--amber);  border-color:rgba(255,192,96,.4);  background:rgba(255,192,96,.08) }
+
+.pfb { padding:20px 24px 16px }
+.pfn {
+  font-family:var(--fd); font-size:48px; font-weight:800;
+  color:var(--b1); line-height:1; float:right; margin-top:-6px;
+}
+.pftitle { font-family:var(--fd); font-size:20px; font-weight:700; color:var(--tx-h); margin-bottom:8px }
+.pfdesc  { font-size:14px; color:var(--tx-mid); line-height:1.8; max-width:520px }
+.pftch   { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px }
+.pftag   {
+  font-size:10px; letter-spacing:2px; color:var(--tok-kw);
+  padding:4px 11px; border:1px solid rgba(160,128,255,.35);
+  background:rgba(160,128,255,.08); text-transform:uppercase;
+}
+
+.pfdb {
+  width:100%; padding:12px 24px; background:var(--bg3);
+  border:none; border-top:1px solid var(--b1);
+  font-size:11px; letter-spacing:3px; color:var(--tx-dim);
+  text-transform:uppercase; text-align:left;
+  display:flex; justify-content:space-between; align-items:center;
+  transition:all .15s;
+}
+.pfdb:hover { color:var(--tx-h); background:var(--panel) }
+.pfdb.open .arr { transform:rotate(180deg) }
+.arr { display:inline-block; transition:transform .2s; color:var(--cyan) }
+
+.pfdw { height:0; overflow:hidden; transition:height .3s ease }
+.pfdwi { padding:24px 24px 28px; border-top:1px solid var(--b1) }
+
+.pdtit {
+  font-size:11px; letter-spacing:3px; color:var(--tok-cmt);
+  text-transform:uppercase; margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.pdtit::before { content:'//'; color:var(--b2) }
+
+.e5-list { list-style:none; padding:0 }
+.e5-list li {
+  font-size:13px; color:var(--tx-mid);
+  padding:7px 0 7px 20px; border-bottom:1px solid var(--b1);
+  position:relative; line-height:1.7;
+}
+.e5-list li::before {
+  content:'›'; position:absolute; left:0;
+  color:var(--cyan); font-size:18px; line-height:1.35;
+}
+.e5-list li:last-child { border-bottom:none }
+
+.e5-proof { margin-top:16px; display:grid; gap:12px }
+.e5-proof textarea {
+  width:100%; min-height:90px; background:var(--bg); border:1px solid var(--b1);
+  color:var(--tx); font-family:var(--fm); font-size:13px;
+  padding:14px; resize:vertical; line-height:1.8;
+}
+.e5-proof textarea:focus { outline:none; border-color:var(--cyan3) }
+.e5-imgzone {
+  border:1px dashed var(--b2); padding:24px; text-align:center;
+  font-size:11px; letter-spacing:2px; color:var(--tx-mute);
+}
+.e5-link { display:flex; align-items:center; gap:12px }
+.e5-link span { font-size:11px; letter-spacing:2px; color:var(--tok-op) }
+.e5-link input {
+  flex:1; background:var(--bg); border:1px solid var(--b1);
+  color:var(--tx); font-family:var(--fm); font-size:12px; padding:9px 13px;
+}
+.e5-link input:focus { outline:none; border-color:var(--cyan3) }
+
+/* ════════════════════════════════════
+   TERRAIN / TIMELINE
+════════════════════════════════════ */
+#experience { background:linear-gradient(180deg, transparent, rgba(0,245,255,.02), transparent) }
+.tl { display:grid; grid-template-columns:1fr 300px; gap:48px }
+.timeline { position:relative; padding-left:30px }
+.timeline::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:1px; background:linear-gradient(180deg, transparent, var(--cyan3) 30%, var(--b2) 70%, transparent);
+}
+.tli {
+  position:relative; margin-bottom:38px;
+  opacity:0; transform:translateX(-16px);
+  transition:opacity .4s, transform .4s;
+}
+.tli.in { opacity:1; transform:translateX(0) }
+.tldot {
+  position:absolute; left:-35px; top:4px;
+  width:10px; height:10px;
+  border:2px solid var(--cyan); background:var(--bg);
+  transform:rotate(45deg);
+  box-shadow:0 0 10px rgba(0,245,255,.5);
+}
+.tldt   { font-size:11px; letter-spacing:2px; color:var(--cyan3); margin-bottom:8px }
+.tltt   { font-family:var(--fd); font-size:22px; font-weight:700; color:var(--tx-h); margin-bottom:5px }
+.tlw    { font-size:11px; letter-spacing:2px; color:var(--tx-mid); margin-bottom:10px }
+.tlds   { font-size:13px; color:var(--tx); line-height:1.8 }
+.tlout  {
+  display:inline-block; margin-top:10px;
+  font-size:10px; letter-spacing:2px; padding:4px 12px; border:1px solid;
+}
+.tlout.o { color:var(--amber); border-color:rgba(255,192,96,.4) }
+.tlout.s { color:var(--green); border-color:rgba(96,255,160,.4) }
+
+/* Dossier card */
+.doss { background:var(--bg2); border:1px solid var(--b2); position:relative }
+.doss::before, .doss::after {
+  content:''; position:absolute;
+  width:14px; height:14px; border-color:var(--cyan3); border-style:solid;
+}
+.doss::before { top:0; left:0;    border-width:2px 0 0 2px }
+.doss::after  { bottom:0; right:0; border-width:0 2px 2px 0 }
+.doss-hdr {
+  padding:13px 18px; border-bottom:1px solid var(--b1);
+  display:flex; align-items:center; gap:12px;
+}
+.doss-hdr svg { opacity:.6 }
+.doss-ttl { font-size:11px; letter-spacing:3px; color:var(--cyan) }
+.doss-rows { padding:8px 0 }
+.dsr {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 18px; border-bottom:1px solid var(--b1);
+}
+.dsr:last-child { border-bottom:none }
+.dsk { font-size:11px; letter-spacing:2px; color:var(--tx-dim) }
+.dsv { font-size:13px; color:var(--tx) }
+.dsv.g { color:var(--green) }
+.dsv.r { color:var(--amber) }
+.radar-wrap { padding:18px; border-top:1px solid var(--b1) }
+.radar-ttl { font-size:10px; letter-spacing:3px; color:var(--tx-dim); text-transform:uppercase; margin-bottom:12px }
+canvas#rc { display:block; margin:0 auto }
+.clr-block {
+  padding:14px 18px; border-top:1px solid var(--b1);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.clr-k { font-size:10px; letter-spacing:3px; color:var(--tx-dim) }
+.clr-v { font-family:var(--fd); font-size:20px; font-weight:800; color:var(--cyan) }
+.clr-s { font-size:10px; letter-spacing:2px; color:var(--green) }
+
+/* ════════════════════════════════════
+   CONTACT
+════════════════════════════════════ */
+.cg { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start }
+.ci { display:grid; gap:12px }
+.cor {
+  display:flex; align-items:center; gap:18px;
+  padding:16px; background:var(--bg2); border:1px solid var(--b1);
+  transition:border-color .2s; position:relative;
+}
+.cor::after {
+  content:''; position:absolute; bottom:0; left:0;
+  width:0; height:2px; background:var(--cyan);
+  opacity:.5; transition:width .3s;
+}
+.cor:hover { border-color:var(--b2) }
+.cor:hover::after { width:100% }
+.coi { font-size:24px; width:38px; text-align:center; flex-shrink:0 }
+.ck  { font-size:10px; letter-spacing:3px; color:var(--tx-dim); text-transform:uppercase; margin-bottom:5px }
+.cv  { font-size:13px; color:var(--tx) }
+.cv a { color:var(--cyan); text-decoration:none }
+.cv a:hover { text-decoration:underline }
+
+/* Terminal */
+.term { background:var(--bg3); border:1px solid var(--b2) }
+.term-bar {
+  padding:10px 16px; background:var(--bg2);
+  border-bottom:1px solid var(--b1);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.term-ttl { font-size:11px; letter-spacing:2px; color:var(--tx-mid) }
+.term-cur { color:var(--cyan); animation:tblink 1s step-end infinite }
+@keyframes tblink { 50% { opacity:0 } }
+.term-body { padding:18px; min-height:120px }
+.term-line {
+  font-size:12px; margin-bottom:10px;
+  opacity:0; animation:tdrop .3s ease forwards;
+}
+@keyframes tdrop { from { opacity:0; transform:translateY(-4px) } to { opacity:1; transform:none } }
+.prompt { color:var(--tok-cmt) }
+.val    { color:var(--tx) }
+.val em { color:var(--tok-str); font-style:normal }
+
+.btn-contact {
+  display:flex; align-items:center; gap:12px; margin-top:18px;
+  background:var(--cyan); color:var(--bg); text-decoration:none;
+  font-size:12px; letter-spacing:3px; padding:14px 24px;
+  text-transform:uppercase; transition:all .2s; font-weight:700;
+  border:2px solid var(--cyan);
+}
+.btn-contact:hover { background:transparent; color:var(--cyan) }
+.tx-note { font-size:10px; letter-spacing:2px; color:var(--tx-dim); margin-top:10px }
+
+/* ════════════════════════════════════
+   FOOTER
+════════════════════════════════════ */
+footer {
+  padding:30px 60px; border-top:1px solid var(--b1);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.ft { font-size:11px; letter-spacing:2px; color:var(--tx-dim) }
+.ft em { color:var(--cyan3); font-style:normal }
+
+/* ════════════════════════════════════
+   ALERT BANNER
+════════════════════════════════════ */
+#alert-banner {
+  position:fixed; top:54px; left:0; right:0; z-index:490;
+  background:rgba(255,80,112,.1); border-bottom:1px solid rgba(255,80,112,.3);
+  padding:9px 32px; display:flex; align-items:center; gap:16px;
+  font-size:11px; letter-spacing:2px; color:rgba(255,80,112,.9);
+  transform:translateY(-100%); transition:transform .3s;
+}
+#alert-banner.show { transform:translateY(0) }
+.ab-icon { color:var(--red) }
+.ab-close { color:var(--tx-dim); padding:4px 10px; border:1px solid var(--b1); cursor:pointer; font-size:10px }
+.ab-close:hover { color:var(--tx-h) }
+
+/* ════════════════════════════════════
+   ANIMATIONS
+════════════════════════════════════ */
+@keyframes fadeup { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:none } }
+@keyframes fadein { from { opacity:0 } to { opacity:1 } }
+
+/* ════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════ */
+@media(max-width:900px) {
+  .hero { grid-template-columns:1fr; padding:72px 24px 40px }
+  .agent-card { display:none }
+  .skills-layout { grid-template-columns:1fr }
+  .char-panel { display:none }
+  .tl { grid-template-columns:1fr }
+  .cg { grid-template-columns:1fr }
+  .wrap { padding:0 24px }
+  nav a { padding:0 10px; font-size:10px }
+  nav a::before { display:none }
+}
+</style>
+</head>
+<body>
+
+<div id="scan"></div>
+<div id="cur"></div>
+<div id="sb"></div>
+
+<!-- ════ LOADER ════ -->
+<div id="loader">
+  <div class="ld-frame">
+    <div class="ld-logo">YOHAN <em>JOLLY</em></div>
+    <div class="ld-sub">BTS SIO // <em>SISR</em> // Portfolio</div>
+    <div class="ld-label"><span>INIT_SYSTEM</span><span id="ldPct">0%</span></div>
+    <div class="ld-track"><div id="ldFill" class="ld-fill"></div></div>
+    <div class="ld-step" id="ldStep"><span class="tc">// </span>Chargement du système...</div>
+    <div class="ld-tokens">
+      <div><span class="tk">const</span> <span class="to">agent</span> = { <span class="ts">"id"</span>: <span class="ts">"UCF-7743"</span> };</div>
+      <div><span class="tk">import</span> <span class="to">{ portfolio }</span> <span class="tk">from</span> <span class="ts">"./sisr"</span>;</div>
+      <div><span class="tc">// clearance: LEVEL-2 ✓</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ HEADER ════ -->
+<header>
+  <div class="h-left">
+    <div class="h-logo">
+      <div class="h-logo-mark"><div class="h-logo-mark-inner"></div></div>
+      <div class="h-name">YOHAN <em>JOLLY</em></div>
+    </div>
+    <div class="h-tag">BTS&nbsp;SIO&nbsp;·&nbsp;SISR</div>
+  </div>
+  <nav>
+    <a href="#competences" class="ss" data-t="competences">Compétences</a>
+    <a href="#projets" class="ss" data-t="projets">Missions</a>
+    <a href="#experience" class="ss" data-t="experience">Terrain</a>
+    <a href="#contact" class="ss" data-t="contact">Contact</a>
+  </nav>
+  <div class="h-status"><div class="h-dot"></div>OPÉRATIONNEL</div>
+</header>
+
+<!-- ════ HERO ════ -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-vline"></div>
+  <div class="hero-linenos">
+    <span>001</span><span>002</span><span>003</span><span>004</span><span>005</span>
+    <span>006</span><span>007</span><span>008</span><span>009</span><span>010</span>
+    <span>011</span><span>012</span><span>013</span><span>014</span><span>015</span>
+  </div>
+
+  <div class="hleft">
+    <div class="hero-tag">
+      <span class="tc">/*</span>
+      <span class="ts">DOSSIER CLASSIFIÉ — #UCF-7743</span>
+      <span class="tc">*/</span>
+    </div>
+    <h1 class="hero-name">YOHAN<em>JOLLY</em></h1>
+    <div class="hero-role">// Étudiant BTS SIO · option SISR</div>
+    <div class="hero-codeline">
+      <span class="tk">const</span> spec = <span class="ts">"Solutions Infra Systèmes Réseaux"</span>; <span class="tc">// 2ème année</span>
+    </div>
+    <p class="hero-bio">2ème année option Solutions d'Infrastructure, Systèmes et Réseaux (SISR). Spécialité cybersécurité &amp; réseaux.</p>
+
+    <div class="hero-status">
+      <div class="hs-row">
+        <div class="hs-key">VITALITÉ</div>
+        <div class="hs-bar">
+          <div class="hs-seg on"></div><div class="hs-seg on"></div><div class="hs-seg on"></div>
+          <div class="hs-seg on"></div><div class="hs-seg on"></div><div class="hs-seg on"></div>
+          <div class="hs-seg on"></div><div class="hs-seg on"></div><div class="hs-seg on"></div><div class="hs-seg on"></div>
+        </div>
+        <div class="hs-val ok">FINE</div>
+      </div>
+      <div class="hs-row"><div class="hs-key">STATUT</div><div class="hs-val cyan">■ EN FORMATION</div></div>
+      <div class="hs-row"><div class="hs-key">CLEARANCE</div><div class="hs-val cyan">LEVEL-2</div></div>
+    </div>
+
+    <div class="hero-cta">
+      <a class="btn btn-p ss" data-t="projets">▶ VOIR LES MISSIONS</a>
+      <a class="btn btn-g ss" data-t="contact">TRANSMETTRE</a>
+    </div>
+  </div>
+
+  <!-- Agent Card -->
+  <div class="agent-card">
+    <div class="ac-bar">
+      <div class="ac-bar-title"><em>AGENT</em> // PROFIL</div>
+      <div class="ac-bar-badge">BTS SIO · SISR</div>
+    </div>
+    <div class="ac-body">
+      <div class="ac-avatar">PHOTO</div>
+      <div class="ac-fields">
+        <div class="acf"><span class="acf-k">NOM DE CODE</span><span class="acf-v">YOHAN JOLLY</span></div>
+        <div class="acf"><span class="acf-k">SPÉCIALITÉ</span><span class="acf-v cyan">Cybersécurité</span></div>
+        <div class="acf"><span class="acf-k">STATUT</span><span class="acf-v ok">■ OPÉRATIONNEL</span></div>
+        <div class="acf"><span class="acf-k">CLEARANCE</span><span class="acf-v cyan">LEVEL-2</span></div>
+      </div>
+      <div class="ac-xp">
+        <div class="ac-xp-top"><span>XP PROGRESSION</span><span>73%</span></div>
+        <div class="ac-xp-track"><div class="ac-xp-fill"></div></div>
+      </div>
+      <div class="ac-inv">
+        <div class="ac-inv-title"><em>//</em> INVENTAIRE</div>
+        <div class="ac-inv-grid">
+          <div class="inv-item">
+            <div class="inv-name">Assiduité</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div></div>
+            <div class="inv-pct">92%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Autonomie</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on y"></div></div>
+            <div class="inv-pct">85%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Communic.</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div></div>
+            <div class="inv-pct">95%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Équipe</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div></div>
+            <div class="inv-pct">95%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Polyval.</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on y"></div></div>
+            <div class="inv-pct">85%</div>
+          </div>
+          <div class="inv-item">
+            <div class="inv-name">Efficacité</div>
+            <div class="inv-bar"><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on"></div><div class="inv-seg on y"></div></div>
+            <div class="inv-pct">85%</div>
+          </div>
+        </div>
+      </div>
+      <div class="ac-equip">
+        <div><span class="ek">arme</span>   <span class="ev">Kit d'analyse réseau</span></div>
+        <div><span class="ek">armure</span> <span class="ev">Défense système</span></div>
+        <div><span class="ek">spécial</span><span class="ev">Instinct analytique</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ COMPÉTENCES ════ -->
+<div id="competences" class="section" style="background:var(--bg2)">
+<div class="wrap">
+  <div class="sh"><span class="sn">01</span><h2 class="st">Compétences</h2><div class="sr"></div></div>
+  <div class="skills-layout">
+    <div class="char-panel">
+      <div class="char-figure">
+        <svg viewBox="0 0 120 154" fill="none" width="120" height="154">
+          <rect x="44" y="114" width="12" height="33" rx="2" fill="#333a4a" stroke="#505878" stroke-width=".8"/>
+          <rect x="64" y="114" width="12" height="33" rx="2" fill="#333a4a" stroke="#505878" stroke-width=".8"/>
+          <rect x="44" y="124" width="12" height="6" rx="1" fill="#3a4255" stroke="#505878"/>
+          <rect x="64" y="124" width="12" height="6" rx="1" fill="#3a4255" stroke="#505878"/>
+          <rect x="42" y="144" width="16" height="4" rx="1" fill="#2c3240" stroke="#505878"/>
+          <rect x="62" y="144" width="16" height="4" rx="1" fill="#2c3240" stroke="#505878"/>
+          <rect x="37" y="74" width="46" height="42" rx="3" fill="#333a4a" stroke="#505878"/>
+          <line x1="60" y1="74" x2="60" y2="116" stroke="#505878" stroke-width=".8"/>
+          <rect x="40" y="79" width="16" height="10" rx="1" fill="#3a4255" stroke="#505878" stroke-width=".6"/>
+          <rect x="64" y="79" width="16" height="10" rx="1" fill="#3a4255" stroke="#505878" stroke-width=".6"/>
+          <rect x="38" y="75" width="8" height="5" rx="1" fill="#2c3240" stroke="#00f5ff" stroke-width=".6"/>
+          <rect x="37" y="110" width="46" height="5" rx="1" fill="#3a4255" stroke="#505878"/>
+          <rect x="20" y="76" width="16" height="35" rx="3" fill="#333a4a" stroke="#505878"/>
+          <ellipse cx="28" cy="114" rx="7" ry="5" fill="#2c3240" stroke="#505878"/>
+          <rect x="84" y="76" width="16" height="35" rx="3" fill="#333a4a" stroke="#505878"/>
+          <ellipse cx="92" cy="114" rx="7" ry="5" fill="#2c3240" stroke="#505878"/>
+          <rect x="24" y="72" width="14" height="7" rx="1" fill="#3a4255" stroke="#505878"/>
+          <rect x="82" y="72" width="14" height="7" rx="1" fill="#3a4255" stroke="#505878"/>
+          <rect x="54" y="63" width="12" height="12" rx="2" fill="#333a4a" stroke="#505878"/>
+          <rect x="42" y="30" width="36" height="32" rx="7" fill="#333a4a" stroke="#505878"/>
+          <ellipse cx="60" cy="31" rx="17" ry="7" fill="#3a4255" stroke="#505878"/>
+          <rect x="42" y="30" width="36" height="9" rx="4" fill="#2c3240" stroke="#505878"/>
+          <ellipse cx="42" cy="45" rx="3" ry="4" fill="#333a4a" stroke="#505878"/>
+          <ellipse cx="78" cy="45" rx="3" ry="4" fill="#333a4a" stroke="#505878"/>
+          <ellipse cx="53" cy="44" rx="4.5" ry="3.5" fill="#2c3240" stroke="#00f5ff" stroke-width=".8"/>
+          <ellipse cx="67" cy="44" rx="4.5" ry="3.5" fill="#2c3240" stroke="#00f5ff" stroke-width=".8"/>
+          <circle cx="53" cy="44" r="2.2" fill="#40d8e8" opacity=".9"/>
+          <circle cx="67" cy="44" r="2.2" fill="#40d8e8" opacity=".9"/>
+          <circle cx="54" cy="43" r=".6" fill="#fff" opacity=".4"/>
+          <circle cx="68" cy="43" r=".6" fill="#fff" opacity=".4"/>
+          <path d="M55 52 L54 58 L60 59 L66 58 L65 52" stroke="#505878" stroke-width=".8" fill="none"/>
+          <path d="M52 62 Q60 64 68 62" stroke="#6070a0" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <circle cx="53" cy="44" r="2.2" fill="#00f5ff" opacity=".12"/>
+          <circle cx="67" cy="44" r="2.2" fill="#00f5ff" opacity=".12"/>
+          <rect x="37" y="75" width="8" height="5" rx="1" fill="none" stroke="#00f5ff" stroke-width=".5" opacity=".7"/>
+        </svg>
+      </div>
+      <div class="char-name">YOHAN JOLLY</div>
+      <div class="char-class">// CYBERSECURITY TRAINEE</div>
+      <div class="char-lvl"><div class="cl-lbl">NIVEAU</div><div class="cl-num">02</div></div>
+      <div class="char-equip">
+        <div><span class="ek">arme</span>   <span class="ev">Kit analyse réseau</span></div>
+        <div><span class="ek">armure</span> <span class="ev">Défense système</span></div>
+        <div><span class="ek">spécial</span><span class="ev">Instinct analytique</span></div>
+      </div>
+    </div>
+
+    <div class="stats-panel">
+      <div class="stat-tabs">
+        <button class="sktab active" data-tab="front">⚔ ANALYSE</button>
+        <button class="sktab" data-tab="back">🛡 SÉCURITÉ</button>
+        <button class="sktab" data-tab="tools">🔧 OUTILS</button>
+        <button class="sktab" data-tab="soft">★ ENVIRONNEMENT</button>
+      </div>
+
+      <div class="skpanel active" id="tab-front">
+        <div class="rcat">CAPACITÉS OFFENSIVES</div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">⚛</span>Analyse réseau</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="75"><div class="rsn"><span class="rsn-ico">🔍</span>Détection d'anomalies</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">75</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🖥</span>Diagnostic système</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">🔧</span>Résolution d'incidents</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rpf"><span class="rpf-lbl">SCORE ANALYSE</span><span class="rpf-score">71/100</span><div class="rpf-stars"><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star">★</span><span class="rpf-star">★</span></div></div>
+      </div>
+
+      <div class="skpanel" id="tab-back">
+        <div class="rcat">CAPACITÉS SÉCURITÉ</div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🔥</span>Firewall (pfSense)</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="70"><div class="rsn"><span class="rsn-ico">👤</span>Active Directory</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">70</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">🔒</span>Sécurisation réseau</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🛡</span>Bonnes pratiques cyber</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rpf"><span class="rpf-lbl">SCORE SÉCURITÉ</span><span class="rpf-score">70/100</span><div class="rpf-stars"><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star">★</span><span class="rpf-star">★</span></div></div>
+      </div>
+
+      <div class="skpanel" id="tab-tools">
+        <div class="rcat">ÉQUIPEMENT // OUTILS</div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🦈</span>Wireshark</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="70"><div class="rsn"><span class="rsn-ico">📡</span>Nmap</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">70</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="75"><div class="rsn"><span class="rsn-ico">🐧</span>Linux</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">75</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">💻</span>Virtualisation</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rpf"><span class="rpf-lbl">SCORE OUTILS</span><span class="rpf-score">67/100</span><div class="rpf-stars"><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star">★</span><span class="rpf-star">★</span></div></div>
+      </div>
+
+      <div class="skpanel" id="tab-soft">
+        <div class="rcat">STATISTIQUES // ENVIRONNEMENT</div>
+        <div class="rstat" data-pct="85"><div class="rsn"><span class="rsn-ico">🌐</span>Réseaux (TCP/IP)</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">85</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="80"><div class="rsn"><span class="rsn-ico">🖥</span>Systèmes Windows</div><div class="rsbar"><div class="rsbar-fill col-ap"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">80</div><div class="rrank rap">A+</div></div>
+        <div class="rstat" data-pct="75"><div class="rsn"><span class="rsn-ico">🏗</span>Architecture réseau</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">75</div><div class="rrank ra">A</div></div>
+        <div class="rstat" data-pct="70"><div class="rsn"><span class="rsn-ico">🚀</span>Déploiement services</div><div class="rsbar"><div class="rsbar-fill col-a"></div><div class="rsbar-segs"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></div><div class="rsval">70</div><div class="rrank ra">A</div></div>
+        <div class="rpf"><span class="rpf-lbl">SCORE ENVIRONNEMENT</span><span class="rpf-score">67/100</span><div class="rpf-stars"><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star on">★</span><span class="rpf-star">★</span><span class="rpf-star">★</span></div></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ════ MISSIONS ════ -->
+<div id="projets" class="section">
+<div class="wrap">
+  <div class="sh"><span class="sn">02</span><h2 class="st">Missions</h2><div class="sr"></div></div>
+  <div class="e5-head">// ÉPREUVE E5 — <em>BTS SIO</em> — COMPÉTENCES DOCUMENTÉES</div>
+  <div class="pg">
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C1 // PATRIMOINE</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">01</div>
+        <div class="pftitle">Gérer le patrimoine informatique</div>
+        <p class="pfdesc">Recensement des ressources, habilitations, continuité de service, sauvegardes et respect des règles d'utilisation.</p>
+        <div class="pftch"><span class="pftag">Inventaire</span><span class="pftag">Habilitations</span><span class="pftag">Sauvegardes</span><span class="pftag">Normes</span></div>
+      </div>
+      <button class="pfdb" data-d="d1">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d1">
+        <div class="pfdwi">
+          <div class="pdtit">SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Recenser et identifier les ressources numériques</li>
+            <li>Exploiter des référentiels, normes et standards adoptés par le prestataire</li>
+            <li>Mettre en place et vérifier les niveaux d'habilitation associés à un service</li>
+            <li>Vérifier les conditions de la continuité d'un service informatique</li>
+            <li>Gérer des sauvegardes</li>
+            <li>Vérifier le respect des règles d'utilisation des ressources numériques</li>
+          </ul>
+          <div class="pdtit" style="margin-top:20px">PREUVE &amp; RÉALISATION</div>
+          <div class="e5-proof">
+            <textarea placeholder="Décrivez ici votre réalisation, le contexte, les outils utilisés et les résultats obtenus..."></textarea>
+            <div class="e5-imgzone">⊕ IMAGE / CAPTURE D'ÉCRAN</div>
+            <div class="e5-link"><span>🔗 LIEN</span><input type="text" placeholder="https://..."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C2 // INCIDENTS</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">02</div>
+        <div class="pftitle">Répondre aux incidents et demandes</div>
+        <p class="pfdesc">Collecte, suivi et traitement des demandes d'assistance concernant les services réseau, système et applicatifs.</p>
+        <div class="pftch"><span class="pftag">Helpdesk</span><span class="pftag">ITIL</span><span class="pftag">Tickets</span><span class="pftag">Résolution</span></div>
+      </div>
+      <button class="pfdb" data-d="d2">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d2">
+        <div class="pfdwi">
+          <div class="pdtit">SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Collecter, suivre et orienter des demandes</li>
+            <li>Traiter des demandes concernant les services réseau et système</li>
+            <li>Traiter des demandes concernant les applications</li>
+          </ul>
+          <div class="pdtit" style="margin-top:20px">PREUVE &amp; RÉALISATION</div>
+          <div class="e5-proof">
+            <textarea placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-imgzone">⊕ IMAGE / CAPTURE D'ÉCRAN</div>
+            <div class="e5-link"><span>🔗 LIEN</span><input type="text" placeholder="https://..."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C3 // WEB</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">03</div>
+        <div class="pftitle">Développer la présence en ligne</div>
+        <p class="pfdesc">Valorisation de l'image sur les médias numériques, référencement, visibilité et évolution du site Web de l'organisation.</p>
+        <div class="pftch"><span class="pftag">SEO</span><span class="pftag">Web</span><span class="pftag">Juridique</span><span class="pftag">Médias</span></div>
+      </div>
+      <button class="pfdb" data-d="d3">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d3">
+        <div class="pfdwi">
+          <div class="pdtit">SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Participer à la valorisation de l'image de l'organisation sur les médias numériques en tenant compte du cadre juridique et des enjeux économiques</li>
+            <li>Référencer les services en ligne de l'organisation et mesurer leur visibilité</li>
+            <li>Participer à l'évolution d'un site Web exploitant les données de l'organisation</li>
+          </ul>
+          <div class="pdtit" style="margin-top:20px">PREUVE &amp; RÉALISATION</div>
+          <div class="e5-proof">
+            <textarea placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-imgzone">⊕ IMAGE / CAPTURE D'ÉCRAN</div>
+            <div class="e5-link"><span>🔗 LIEN</span><input type="text" placeholder="https://..."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C4 // PROJET</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">04</div>
+        <div class="pftitle">Travailler en mode projet</div>
+        <p class="pfdesc">Analyse des objectifs, planification des activités, suivi des indicateurs et gestion des écarts en environnement projet.</p>
+        <div class="pftch"><span class="pftag">Planification</span><span class="pftag">Indicateurs</span><span class="pftag">Méthode</span><span class="pftag">Analyse</span></div>
+      </div>
+      <button class="pfdb" data-d="d4">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d4">
+        <div class="pfdwi">
+          <div class="pdtit">SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Analyser les objectifs et les modalités d'organisation d'un projet</li>
+            <li>Planifier les activités</li>
+            <li>Évaluer les indicateurs de suivi d'un projet et analyser les écarts</li>
+          </ul>
+          <div class="pdtit" style="margin-top:20px">PREUVE &amp; RÉALISATION</div>
+          <div class="e5-proof">
+            <textarea placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-imgzone">⊕ IMAGE / CAPTURE D'ÉCRAN</div>
+            <div class="e5-link"><span>🔗 LIEN</span><input type="text" placeholder="https://..."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C5 // SERVICE</span><span class="pfs a">VALIDÉ</span></div>
+      <div class="pfb">
+        <div class="pfn">05</div>
+        <div class="pftitle">Mettre à disposition un service informatique</div>
+        <p class="pfdesc">Tests d'intégration et d'acceptation, déploiement et accompagnement des utilisateurs lors de la mise en place d'un service.</p>
+        <div class="pftch"><span class="pftag">Tests</span><span class="pftag">Déploiement</span><span class="pftag">Formation</span><span class="pftag">Intégration</span></div>
+      </div>
+      <button class="pfdb" data-d="d5">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d5">
+        <div class="pfdwi">
+          <div class="pdtit">SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Réaliser les tests d'intégration et d'acceptation d'un service</li>
+            <li>Déployer un service</li>
+            <li>Accompagner les utilisateurs dans la mise en place d'un service</li>
+          </ul>
+          <div class="pdtit" style="margin-top:20px">PREUVE &amp; RÉALISATION</div>
+          <div class="e5-proof">
+            <textarea placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-imgzone">⊕ IMAGE / CAPTURE D'ÉCRAN</div>
+            <div class="e5-link"><span>🔗 LIEN</span><input type="text" placeholder="https://..."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pf">
+      <div class="pfh"><span class="pfc">C6 // PROFESSIONNEL</span><span class="pfs cl">EN COURS</span></div>
+      <div class="pfb">
+        <div class="pfn">06</div>
+        <div class="pftitle">Organiser son développement professionnel</div>
+        <p class="pfdesc">Environnement d'apprentissage personnel, veille informationnelle, gestion de l'identité et du projet professionnel.</p>
+        <div class="pftch"><span class="pftag">Veille</span><span class="pftag">Identité</span><span class="pftag">Apprentissage</span><span class="pftag">Projet</span></div>
+      </div>
+      <button class="pfdb" data-d="d6">OUVRIR LE DOSSIER <span class="arr">▼</span></button>
+      <div class="pfdw" id="d6">
+        <div class="pfdwi">
+          <div class="pdtit">SOUS-COMPÉTENCES</div>
+          <ul class="e5-list">
+            <li>Mettre en place son environnement d'apprentissage personnel</li>
+            <li>Mettre en œuvre des outils et stratégies de veille informationnelle</li>
+            <li>Gérer son identité professionnelle</li>
+            <li>Développer son projet professionnel</li>
+          </ul>
+          <div class="pdtit" style="margin-top:20px">PREUVE &amp; RÉALISATION</div>
+          <div class="e5-proof">
+            <textarea placeholder="Décrivez ici votre réalisation..."></textarea>
+            <div class="e5-imgzone">⊕ IMAGE / CAPTURE D'ÉCRAN</div>
+            <div class="e5-link"><span>🔗 LIEN</span><input type="text" placeholder="https://..."></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div></div>
+
+<!-- ════ TERRAIN ════ -->
+<div id="experience" class="section" style="background:var(--bg2)">
+<div class="wrap">
+  <div class="sh"><span class="sn">03</span><h2 class="st">Rapport de Terrain</h2><div class="sr"></div></div>
+  <div class="tl">
+    <div class="timeline">
+      <div class="tli">
+        <div class="tldot"></div>
+        <div class="tldt">■ 2024 — PRÉSENT // EN COURS</div>
+        <div class="tltt">BTS SIO</div>
+        <div class="tlw">// Lycée Saint Rémi — ROUBAIX, FRANCE</div>
+        <p class="tlds">BTS SIO spécialité Solutions d'Infrastructure, Systèmes et Réseaux. Option Mathématiques approfondies.</p>
+        <span class="tlout o">MISSION EN COURS</span>
+      </div>
+      <div class="tli">
+        <div class="tldot"></div>
+        <div class="tldt">■ Janvier 2026 — Février 2026 // TERMINÉE</div>
+        <div class="tltt">Stage en milieu professionnel</div>
+        <div class="tlw">// Service Zonal d'Appui Numérique — LILLE, FRANCE</div>
+        <p class="tlds">Stage de deuxième année au sein du Service Zonal d'Appui Numérique du Département Zonal de la Police Nationale du Nord pendant 7 semaines.</p>
+        <span class="tlout s">MISSION ACCOMPLIE</span>
+      </div>
+      <div class="tli">
+        <div class="tldot"></div>
+        <div class="tldt">■ 2021 — 2024 // TERMINÉE</div>
+        <div class="tltt">Baccalauréat général</div>
+        <div class="tlw">// Lycée Saint Rémi — ROUBAIX, FRANCE</div>
+        <p class="tlds">Baccalauréat Général Spécialité Mathématique - SVT. Mention Assez bien.</p>
+        <span class="tlout s">MISSION ACCOMPLIE</span>
+      </div>
+    </div>
+
+    <div class="doss">
+      <div class="doss-hdr">
+        <svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="var(--cyan3)" stroke-width="2">
+          <circle cx="16" cy="16" r="4"/><path d="M16 12A8 8 0 0 1 23.9 17" stroke-width="4" stroke-linecap="round"/>
+          <path d="M23.9 17A8 8 0 0 1 8.1 17" stroke-width="4" stroke-linecap="round"/>
+          <path d="M8.1 17A8 8 0 0 1 16 12" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="2" fill="var(--cyan3)" stroke="none"/>
+        </svg>
+        <div class="doss-ttl">PROFIL OPÉRATIONNEL</div>
+      </div>
+      <div class="doss-rows">
+        <div class="dsr"><span class="dsk">Missions totales</span><span class="dsv">6</span></div>
+        <div class="dsr"><span class="dsk">Taux de succès</span><span class="dsv g">97.4%</span></div>
+        <div class="dsr"><span class="dsk">Années terrain</span><span class="dsv">2+</span></div>
+        <div class="dsr"><span class="dsk">Opérations validées</span><span class="dsv">4</span></div>
+        <div class="dsr"><span class="dsk">Statut</span><span class="dsv r">En cours de formation</span></div>
+      </div>
+      <div class="radar-wrap">
+        <div class="radar-ttl">RADAR DE COMPÉTENCES</div>
+        <canvas id="rc" width="200" height="200"></canvas>
+      </div>
+      <div class="clr-block">
+        <div><div class="clr-k">Niveau clearance</div><div class="clr-v">LEVEL-2/3</div></div>
+        <div class="clr-s">● ACTIVE</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ════ CONTACT ════ -->
+<div id="contact" class="section" style="padding-bottom:80px">
+<div class="wrap">
+  <div class="sh"><span class="sn">04</span><h2 class="st">Transmission</h2><div class="sr"></div></div>
+  <div class="cg">
+    <div class="ci">
+      <div class="cor"><div class="coi">✉</div><div><div class="ck">Fréquence principale</div><div class="cv"><a href="mailto:nahoyjolly@gmail.com">nahoyjolly@gmail.com</a></div></div></div>
+      <div class="cor"><div class="coi">📍</div><div><div class="ck">Coordonnées GPS</div><div class="cv">LILLE, FRANCE</div></div></div>
+      <div class="cor"><div class="coi">🔗</div><div><div class="ck">Réseau sécurisé</div><div class="cv"><a href="https://www.linkedin.com/in/yohan-jolly-37410b359/" target="_blank">linkedin.com/in/yohan-jolly</a></div></div></div>
+      <div class="cor"><div class="coi">🐙</div><div><div class="ck">Archives</div><div class="cv">nahoyjolly-del</div></div></div>
+      <div class="cor"><div class="coi">📄</div><div><div class="ck">CV</div><div class="cv"><a href="#" style="color:var(--cyan)">⬇ Télécharger le CV (PDF)</a></div></div></div>
+      <div class="cor"><div class="coi">📊</div><div><div class="ck">Tableau de compétences</div><div class="cv"><a href="#" style="color:var(--cyan)">⬇ Télécharger le tableau (Excel)</a></div></div></div>
+    </div>
+    <div>
+      <div class="term">
+        <div class="term-bar">
+          <span class="term-ttl">TERMINAL // TRANSMISSION SÉCURISÉE</span>
+          <span class="term-cur">█</span>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+      <a class="btn-contact" href="https://mail.google.com/mail/?view=cm&to=nahoyjolly@gmail.com&su=Contact%20Portfolio" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="currentColor"/></svg>
+        <span>ENVOYER LE SIGNAL</span>
+      </a>
+      <div class="tx-note">// Ouvre Gmail avec nahoyjolly@gmail.com comme destinataire</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ALERT BANNER -->
+<div id="alert-banner">
+  <span class="ab-icon">⚠</span>
+  <span id="ab-txt">ACCÈS DOSSIER CLASSIFIÉ DÉTECTÉ — SURVEILLANCE ACTIVÉE</span>
+  <span class="ab-close" id="ab-close">[ FERMER ]</span>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div>SYS <span class="hv" id="chCpu">CPU: 12%</span></div>
+  <div>MEM <span class="hv" id="chMem">MEM: 4.2GB</span></div>
+  <div>NET <span class="hv" id="chNet">NET: ↑ 0b/s</span></div>
+  <div id="chTime" style="color:var(--cyan3)">--:--:--</div>
+</div>
+
+<!-- TICKER -->
+<div id="ticker"><div class="tick-inner" id="tickerInner"></div></div>
+
+<footer>
+  <div class="ft">© 2025 <em>YOHAN JOLLY</em> // BTS SIO — SYSTÈMES OPÉRATIONNELS</div>
+  <div class="ft">BTS SIO 2025 // <em>SISR · CLEARANCE ACTIVE</em></div>
+</footer>
+
+<script>
+'use strict';
+
+/* ══ LOADER ══ */
+(function(){
+  const fill=document.getElementById('ldFill'),pct=document.getElementById('ldPct'),step=document.getElementById('ldStep');
+  const steps=[[10,'<span class="kw">INIT</span> noyau système...'],[25,'<span class="kw">LOAD</span> modules de sécurité...'],[42,'<span class="kw">CHECK</span> intégrité des données...'],[58,'<span class="kw">CONN</span> serveur de clearance...'],[72,'<span class="kw">DECRYPT</span> dossier classifié...'],[88,'<span class="kw">AUTH</span> LEVEL-2 confirmée...'],[100,'<span class="ok">✓</span> Accès autorisé — Bienvenue, Agent.']];
+  let i=0;
+  function next(){
+    if(i>=steps.length){ setTimeout(()=>document.getElementById('loader').classList.add('out'),400); return; }
+    const [p,t]=steps[i++];
+    fill.style.width=p+'%'; pct.textContent=p+'%'; step.innerHTML=t;
+    setTimeout(next,i===steps.length?700:380+Math.random()*200);
+  }
+  setTimeout(next,400);
+})();
+
+/* ══ CURSOR ══ */
+const cur=document.getElementById('cur');
+let cx=0,cy=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY});
+(function a(){cx+=(tx-cx)*.2;cy+=(ty-cy)*.2;cur.style.left=cx+'px';cur.style.top=cy+'px';requestAnimationFrame(a)})();
+document.querySelectorAll('a,button,.pftag,.cor,.sktab').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('hover'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('hover'));
+});
+
+/* ══ SCROLLBAR ══ */
+window.addEventListener('scroll',()=>{
+  document.getElementById('sb').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';
+});
+
+/* ══ SMOOTH SCROLL ══ */
+document.querySelectorAll('.ss,nav a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=a.dataset.t||a.getAttribute('href').replace('#','');
+    const el=document.getElementById(t);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+
+/* ══ SKILL TABS ══ */
+function animBars(panel,delay){
+  panel.querySelectorAll('.rstat').forEach((s,i)=>{
+    const pct=parseInt(s.dataset.pct)||0;
+    const fill=s.querySelector('.rsbar-fill');
+    if(!fill) return;
+    fill.style.width='0%';
+    setTimeout(()=>{fill.style.transition='width .9s cubic-bezier(.4,0,.2,1)';fill.style.width=pct+'%';},delay+i*80);
+  });
+}
+document.querySelectorAll('.sktab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.sktab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.skpanel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    const panel=document.getElementById('tab-'+tab.dataset.tab);
+    if(panel){panel.classList.add('active');animBars(panel,60);}
+  });
+});
+
+/* ══ DRAWERS ══ */
+document.querySelectorAll('.pfdb').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const dw=document.getElementById(btn.dataset.d);
+    if(!dw) return;
+    const isOpen=dw.classList.contains('open');
+    document.querySelectorAll('.pfdw').forEach(d=>{d.classList.remove('open');d.style.height='0';});
+    document.querySelectorAll('.pfdb').forEach(b=>b.classList.remove('open'));
+    if(!isOpen){dw.classList.add('open');dw.style.height=dw.scrollHeight+'px';btn.classList.add('open');}
+  });
+});
+
+/* ══ INTERSECTION OBSERVER ══ */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    if(e.target.classList.contains('pf')) e.target.classList.add('in');
+    if(e.target.classList.contains('tli')) e.target.classList.add('in');
+    if(e.target.classList.contains('skpanel')&&e.target.classList.contains('active')){animBars(e.target,100);io.unobserve(e.target);}
+  });
+},{threshold:.08});
+document.querySelectorAll('.pf,.tli,.skpanel').forEach(el=>io.observe(el));
+
+/* ══ RADAR ══ */
+(function(){
+  const cv=document.getElementById('rc'); if(!cv) return;
+  const ctx=cv.getContext('2d'),cx=100,cy=100,r=72;
+  const labs=['Analyse','Sécurité','Outils','Env.','Incidents','AD'];
+  const vals=[.75,.70,.68,.67,.75,.75];
+  const N=6; let prog=0,running=false;
+  function draw(){
+    ctx.clearRect(0,0,200,200);
+    for(let l=1;l<=4;l++){
+      ctx.beginPath();
+      for(let i=0;i<N;i++){const a=Math.PI*2/N*i-Math.PI/2;const x=cx+r*(l/4)*Math.cos(a),y=cy+r*(l/4)*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+      ctx.closePath();ctx.strokeStyle=`rgba(0,245,255,${.08+l*.06})`;ctx.lineWidth=.8;ctx.stroke();
+    }
+    for(let i=0;i<N;i++){
+      const a=Math.PI*2/N*i-Math.PI/2;
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+      ctx.strokeStyle='rgba(0,245,255,.18)';ctx.lineWidth=.8;ctx.stroke();
+    }
+    const p=Math.min(prog,1);
+    ctx.beginPath();
+    for(let i=0;i<N;i++){const a=Math.PI*2/N*i-Math.PI/2;const rv=r*vals[i]*p;i===0?ctx.moveTo(cx+rv*Math.cos(a),cy+rv*Math.sin(a)):ctx.lineTo(cx+rv*Math.cos(a),cy+rv*Math.sin(a));}
+    ctx.closePath();ctx.fillStyle='rgba(0,245,255,.18)';ctx.fill();
+    ctx.strokeStyle='rgba(0,245,255,.95)';ctx.lineWidth=2;ctx.shadowColor='rgba(0,245,255,.5)';ctx.shadowBlur=8;ctx.stroke();ctx.shadowBlur=0;
+    for(let i=0;i<N;i++){
+      const a=Math.PI*2/N*i-Math.PI/2;const rv=r*vals[i]*p;
+      if(rv>0){ctx.beginPath();ctx.arc(cx+rv*Math.cos(a),cy+rv*Math.sin(a),3,0,Math.PI*2);ctx.fillStyle='#00f5ff';ctx.shadowColor='rgba(0,245,255,.6)';ctx.shadowBlur=6;ctx.fill();ctx.shadowBlur=0;}
+      ctx.fillStyle='#90a0c0';ctx.font='8px JetBrains Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(labs[i],cx+(r+14)*Math.cos(a),cy+(r+14)*Math.sin(a));
+    }
+    if(prog<1){prog+=.025;requestAnimationFrame(draw);}
+  }
+  new IntersectionObserver(entries=>{if(entries[0].isIntersecting&&!running){running=true;draw();}},{threshold:.3}).observe(cv);
+})();
+
+/* ══ TERMINAL ══ */
+function buildTerminal(){
+  const tb=document.getElementById('termBody'); if(!tb) return;
+  const lines=[['INIT','CANAL SÉCURISÉ... <em>OK</em>'],['DEST','nahoyjolly@gmail.com'],['PROT','CHIFFREMENT AES-256'],['STAT','EN ATTENTE DE SIGNAL']];
+  tb.innerHTML='';
+  lines.forEach((l,i)=>{
+    const div=document.createElement('div');
+    div.className='term-line'; div.style.animationDelay=(i*.22)+'s';
+    div.innerHTML=`<span class="prompt">[${l[0]}]</span> <span class="val">${l[1]}</span>`;
+    tb.appendChild(div);
+  });
+}
+new IntersectionObserver(entries=>{if(entries[0].isIntersecting) buildTerminal();},{threshold:.3}).observe(document.getElementById('contact'));
+
+/* ══ HUD ══ */
+function updateHUD(){
+  const now=new Date();
+  const el=document.getElementById('chTime');
+  if(el) el.textContent=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  const cpu=document.getElementById('chCpu');const mem=document.getElementById('chMem');const net=document.getElementById('chNet');
+  if(cpu) cpu.textContent='CPU: '+(8+Math.floor(Math.random()*18))+'%';
+  if(mem) mem.textContent='MEM: '+(3.8+Math.random()*.8).toFixed(1)+'GB';
+  if(net) net.textContent='NET: ↑ '+Math.floor(Math.random()*420)+'b/s';
+}
+setInterval(updateHUD,1200); updateHUD();
+
+/* ══ TICKER ══ */
+(function(){
+  const t=document.getElementById('tickerInner'); if(!t) return;
+  const items=[{t:'UCF-7743 // DOSSIER ACTIF',hi:true},{t:'SYSTÈME SÉCURISÉ v3.1'},{t:'RÉSEAU OPÉRATIONNEL',hi:true},{t:'PROTOCOLE CONTAINMENT OK'},{t:'AGENTS CONNECTÉS: 1',hi:true},{t:'CLEARANCE LEVEL-2 CONFIRMÉ',hi:true},{t:'CHIFFREMENT AES-256 ACTIF'},{t:'SURVEILLANCE PASSIVE // STANDBY'},{t:'UCF-7743 // DOSSIER ACTIF',hi:true},{t:'SYSTÈME SÉCURISÉ v3.1'},{t:'RÉSEAU OPÉRATIONNEL',hi:true},{t:'PROTOCOLE CONTAINMENT OK'},{t:'AGENTS CONNECTÉS: 1',hi:true},{t:'CLEARANCE LEVEL-2 CONFIRMÉ',hi:true},{t:'CHIFFREMENT AES-256 ACTIF'},{t:'SURVEILLANCE PASSIVE // STANDBY'}];
+  t.innerHTML=items.map(i=>`<span class="tick-item${i.hi?' hi':''}">${i.t}</span>`).join('');
+})();
+
+/* ══ ALERT BANNER ══ */
+document.getElementById('ab-close').addEventListener('click',()=>document.getElementById('alert-banner').classList.remove('show'));
+const msgs=['ACCÈS DOSSIER CLASSIFIÉ DÉTECTÉ — SURVEILLANCE ACTIVÉE','AVERTISSEMENT : ZONE SÉCURISÉE ACTIVE','TRAÇAGE IP EN COURS... IDENTITÉ ENREGISTRÉE','PROTOCOLE SÉCURITÉ NIVEAU 3 ACTIF'];
+let lastS=0,msgIdx=0;
+window.addEventListener('scroll',()=>{
+  if(window.scrollY-lastS>800){lastS=window.scrollY;msgIdx=(msgIdx+1)%msgs.length;const ab=document.getElementById('alert-banner'),abt=document.getElementById('ab-txt');if(ab&&abt){abt.textContent=msgs[msgIdx];ab.classList.add('show');setTimeout(()=>ab.classList.remove('show'),4000);}}
+});
+
+/* ══ INIT BARS ══ */
+const ap=document.querySelector('.skpanel.active');
+if(ap) setTimeout(()=>animBars(ap,500),11500);
+</script>
+</body>
+</html>
